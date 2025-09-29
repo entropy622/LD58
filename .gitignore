@@ -112,3 +112,5 @@ crashlytics-build.properties
 /[Aa]ssets/QFramework/ToolKits/*/*.unitypackage.meta*
 LD56pj/Assets/TestScene.unity
 LD56pj/Assets/TestScene.unity.meta
+
+.DS_Store
