@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using QFramework;
@@ -17,6 +18,9 @@ public class PlayerController : MonoSingleton<PlayerController>
     public float crouchSpeed = 1f;
     public float rollPower = 1f;
     public float rollDuration = 0.5f;
+    
+    [Header("能力管理器")]
+    [SerializeField] private AbilityManager abilityManager;
     
     [Header("能力系统")]
     [Space(10)]
@@ -96,6 +100,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         InitializeComponents();
         InitializeAbilities();
+        InitializeAbilityManager();
         SetupEventHandlers();
         
         groundLayer = LayerMask.GetMask("Ground");
@@ -104,10 +109,10 @@ public class PlayerController : MonoSingleton<PlayerController>
     void Update()
     {
         UpdateGroundDetection();
-        UpdateCrouchState();
+        // UpdateCrouchState();
         UpdateRollAction();
         UpdateInteraction();
-        UpdatePushState();
+        // UpdatePushState();
         
         // 更新所有启用的能力
         UpdateAbilities();
@@ -139,6 +144,35 @@ public class PlayerController : MonoSingleton<PlayerController>
         _jumpAbility.Initialize(this);
         _ironBlockAbility.Initialize(this);
         _balloonAbility.Initialize(this);
+    }
+    
+    private void InitializeAbilityManager()
+    {
+        // 如果没有手动指定AbilityManager，尝试获取实例
+        if (abilityManager == null)
+        {
+            abilityManager = FindObjectOfType<AbilityManager>();
+            if (abilityManager == null)
+            {
+                Debug.LogWarning("AbilityManager未找到，能力槽系统将不会工作");
+                return;
+            }
+        }
+        
+        // 向AbilityManager注册当前玩家控制器
+        abilityManager.RegisterPlayerController(this);
+        
+        // 初始化默认能力配置
+        SetupDefaultAbilities();
+    }
+    
+    private void SetupDefaultAbilities()
+    {
+        // 默认启用移动和跳跃能力，禁用特殊能力
+        EnableAbility<MovementAbility>();
+        EnableAbility<JumpAbility>();
+        DisableAbility<IronBlockAbility>();
+        DisableAbility<BalloonAbility>();
     }
     
     private void SetupEventHandlers()
@@ -405,6 +439,9 @@ public class PlayerController : MonoSingleton<PlayerController>
         {
             ability.isEnabled = true;
             ability.OnAbilityActivated();
+            
+            // 通知AbilityManager能力状态变化
+            NotifyAbilityStateChanged<T>(true);
         }
     }
     
@@ -415,6 +452,9 @@ public class PlayerController : MonoSingleton<PlayerController>
         {
             ability.isEnabled = false;
             ability.OnAbilityDeactivated();
+            
+            // 通知AbilityManager能力状态变化
+            NotifyAbilityStateChanged<T>(false);
         }
     }
     
@@ -428,6 +468,102 @@ public class PlayerController : MonoSingleton<PlayerController>
             else
                 EnableAbility<T>();
         }
+    }
+    
+    /// <summary>
+    /// 通过能力类型启用能力（供AbilityManager调用）
+    /// </summary>
+    public void EnableAbilityByType(AbilityManager.AbilityType abilityType)
+    {
+        switch (abilityType)
+        {
+            case AbilityManager.AbilityType.Movement:
+                EnableAbility<MovementAbility>();
+                break;
+            case AbilityManager.AbilityType.Jump:
+                EnableAbility<JumpAbility>();
+                break;
+            case AbilityManager.AbilityType.IronBlock:
+                EnableAbility<IronBlockAbility>();
+                break;
+            case AbilityManager.AbilityType.Balloon:
+                EnableAbility<BalloonAbility>();
+                break;
+        }
+    }
+    
+    /// <summary>
+    /// 通过能力类型禁用能力（供AbilityManager调用）
+    /// </summary>
+    public void DisableAbilityByType(AbilityManager.AbilityType abilityType)
+    {
+        switch (abilityType)
+        {
+            case AbilityManager.AbilityType.Movement:
+                DisableAbility<MovementAbility>();
+                break;
+            case AbilityManager.AbilityType.Jump:
+                DisableAbility<JumpAbility>();
+                break;
+            case AbilityManager.AbilityType.IronBlock:
+                DisableAbility<IronBlockAbility>();
+                break;
+            case AbilityManager.AbilityType.Balloon:
+                DisableAbility<BalloonAbility>();
+                break;
+        }
+    }
+    
+    /// <summary>
+    /// 检查指定类型的能力是否启用
+    /// </summary>
+    public bool IsAbilityEnabled(AbilityManager.AbilityType abilityType)
+    {
+        switch (abilityType)
+        {
+            case AbilityManager.AbilityType.Movement:
+                return _movementAbility.isEnabled;
+            case AbilityManager.AbilityType.Jump:
+                return _jumpAbility.isEnabled;
+            case AbilityManager.AbilityType.IronBlock:
+                return _ironBlockAbility.isEnabled;
+            case AbilityManager.AbilityType.Balloon:
+                return _balloonAbility.isEnabled;
+            default:
+                return false;
+        }
+    }
+    
+    /// <summary>
+    /// 通知AbilityManager能力状态变化
+    /// </summary>
+    private void NotifyAbilityStateChanged<T>(bool enabled) where T : PlayerAbility
+    {
+        if (abilityManager == null) return;
+        
+        AbilityManager.AbilityType abilityType = AbilityManager.AbilityType.None;
+        
+        if (typeof(T) == typeof(MovementAbility))
+            abilityType = AbilityManager.AbilityType.Movement;
+        else if (typeof(T) == typeof(JumpAbility))
+            abilityType = AbilityManager.AbilityType.Jump;
+        else if (typeof(T) == typeof(IronBlockAbility))
+            abilityType = AbilityManager.AbilityType.IronBlock;
+        else if (typeof(T) == typeof(BalloonAbility))
+            abilityType = AbilityManager.AbilityType.Balloon;
+        
+        if (abilityType != AbilityManager.AbilityType.None)
+        {
+            abilityManager.OnAbilityStateChanged(abilityType, enabled);
+        }
+    }
+    
+    /// <summary>
+    /// 获取AbilityManager引用
+    /// </summary>
+    public AbilityManager GetAbilityManager()
+    {
+        return abilityManager;
     }
     #endregion
     
