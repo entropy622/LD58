@@ -33,17 +33,6 @@ public class PlayerControllerEditor : Editor
             EditorGUILayout.PropertyField(prop, true);
         }
         
-        // 添加分隔线
-        EditorGUILayout.Space(15);
-        EditorGUILayout.LabelField("能力系统控制", EditorStyles.boldLabel);
-        EditorGUILayout.Space(10);
-        
-        // 能力开关控制
-        DrawAbilitySection("😶 移动能力", movementAbilityProp, controller.movementAbility);
-        DrawAbilitySection("🦘 跳跃能力", jumpAbilityProp, controller.jumpAbility);
-        DrawAbilitySection("🧱 铁块能力", ironBlockAbilityProp, controller.ironBlockAbility);
-        DrawAbilitySection("🎈 气球能力", balloonAbilityProp, controller.balloonAbility);
-        
         // 应用修改
         serializedObject.ApplyModifiedProperties();
     }

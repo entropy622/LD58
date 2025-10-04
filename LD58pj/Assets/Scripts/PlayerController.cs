@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using QFramework;
@@ -7,7 +6,7 @@ using System.Collections;
 
 /// <summary>
 /// 模块化玩家控制器 - 基于能力系统的角色控制
-/// 兼容旧版本的同时提供新的模块化功能
+/// 作为能力执行器，状态由AbilityManager统一管理
 /// </summary>
 public class PlayerController : MonoSingleton<PlayerController>
 {
@@ -22,8 +21,8 @@ public class PlayerController : MonoSingleton<PlayerController>
     [Header("能力管理器")]
     [SerializeField] private AbilityManager abilityManager;
     
-    // 能力系统字典，用于解耦能力类型管理
-    private Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
+    // 能力实例字典（仅用于执行，状态由AbilityManager管理）
+    public Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
     
     [Header("能力系统")]
     [Space(10)]
@@ -40,9 +39,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     public JumpAbility jumpAbility => _jumpAbility;
     public IronBlockAbility ironBlockAbility => _ironBlockAbility;
     public BalloonAbility balloonAbility => _balloonAbility;
-    
-    [Header("兼容旧版本")]
-    [SerializeField] private bool enableLegacyCompatibility = true;
     
     // 组件引用
     private Rigidbody2D rb;
@@ -62,10 +58,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     private Vector2 originalColliderSize;
     private Vector2 originalColliderOffset;
     private LayerMask groundLayer;
-    
-    // 推箱子相关
-    private GameObject pushBox;
-    private bool canPush = false;
     
     // 旧版本兼容属性（委托给能力系统）
     public float jumpPower 
@@ -112,13 +104,11 @@ public class PlayerController : MonoSingleton<PlayerController>
     void Update()
     {
         UpdateGroundDetection();
-        // UpdateCrouchState();
         UpdateRollAction();
         UpdateInteraction();
-        // UpdatePushState();
         
-        // 更新所有启用的能力
-        UpdateAbilities();
+        // 执行AbilityManager指定的能力
+        ExecuteActiveAbilities();
         
         // 更新朝向和动画
         UpdateFacing();
@@ -127,8 +117,8 @@ public class PlayerController : MonoSingleton<PlayerController>
     
     void FixedUpdate()
     {
-        // 物理更新所有启用的能力
-        FixedUpdateAbilities();
+        // 物理更新AbilityManager指定的能力
+        FixedUpdateActiveAbilities();
     }
     
     private void InitializeComponents()
@@ -143,7 +133,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     
     private void InitializeAbilities()
     {
-        // 初始化所有能力
+        // 初始化所有能力实例
         _movementAbility.Initialize(this);
         _jumpAbility.Initialize(this);
         _ironBlockAbility.Initialize(this);
@@ -175,25 +165,13 @@ public class PlayerController : MonoSingleton<PlayerController>
             abilityManager = AbilityManager.Instance;
             if (abilityManager == null)
             {
-                Debug.LogWarning("AbilityManager未找到，能力槽系统将不会工作");
+                Debug.LogWarning("AbilityManager未找到，能力系统将不会工作");
                 return;
             }
         }
         
         // 向AbilityManager注册当前玩家控制器
         abilityManager.RegisterPlayerController(this);
-        
-        // 初始化默认能力配置
-        SetupDefaultAbilities();
-    }
-    
-    private void SetupDefaultAbilities()
-    {
-        // 默认启用移动和跳跃能力，禁用特殊能力
-        EnableAbility<MovementAbility>();
-        EnableAbility<JumpAbility>();
-        DisableAbility<IronBlockAbility>();
-        DisableAbility<BalloonAbility>();
     }
     
     private void SetupEventHandlers()
@@ -204,20 +182,38 @@ public class PlayerController : MonoSingleton<PlayerController>
         }).UnRegisterWhenGameObjectDestroyed(gameObject);
     }
     
-    private void UpdateAbilities()
+    /// <summary>
+    /// 执行AbilityManager中激活的能力
+    /// </summary>
+    private void ExecuteActiveAbilities()
     {
-        if (_movementAbility.isEnabled) _movementAbility.UpdateAbility();
-        if (_jumpAbility.isEnabled) _jumpAbility.UpdateAbility();
-        if (_ironBlockAbility.isEnabled) _ironBlockAbility.UpdateAbility();
-        if (_balloonAbility.isEnabled) _balloonAbility.UpdateAbility();
+        if (abilityManager == null) return;
+
+        var activeAbilities = abilityManager.GetEquippedAbilities();
+        foreach (string abilityTypeId in activeAbilities)
+        {
+            if (_abilityRegistry.TryGetValue(abilityTypeId, out PlayerAbility ability))
+            {
+                ability.UpdateAbility();
+            }
+        }
     }
     
-    private void FixedUpdateAbilities()
+    /// <summary>
+    /// 物理更新AbilityManager中激活的能力
+    /// </summary>
+    private void FixedUpdateActiveAbilities()
     {
-        if (_movementAbility.isEnabled) _movementAbility.FixedUpdateAbility();
-        if (_jumpAbility.isEnabled) _jumpAbility.FixedUpdateAbility();
-        if (_ironBlockAbility.isEnabled) _ironBlockAbility.FixedUpdateAbility();
-        if (_balloonAbility.isEnabled) _balloonAbility.FixedUpdateAbility();
+        if (abilityManager == null) return;
+
+        var activeAbilities = abilityManager.GetEquippedAbilities();
+        foreach (string abilityTypeId in activeAbilities)
+        {
+            if (_abilityRegistry.TryGetValue(abilityTypeId, out PlayerAbility ability))
+            {
+                ability.FixedUpdateAbility();
+            }
+        }
     }
     
     #region Ground Detection
@@ -239,57 +235,6 @@ public class PlayerController : MonoSingleton<PlayerController>
         
         canStand = !Physics2D.Raycast(leftTopPoint, Vector2.up, 1f, groundLayer) &&
                   !Physics2D.Raycast(rightTopPoint, Vector2.up, 1f, groundLayer);
-    }
-    #endregion
-    
-    #region Crouch System
-    private void UpdateCrouchState()
-    {
-        if (isPushing) return;
-        
-        bool wantsToCrouch = Input.GetKey(KeyCode.S);
-        
-        if (wantsToCrouch)
-        {
-            EnterCrouchState();
-        }
-        else if (canStand)
-        {
-            ExitCrouchState();
-        }
-    }
-    
-    private void EnterCrouchState()
-    {
-        if (!isGetDown)
-        {
-            isGetDown = true;
-            ModifyColliderForCrouch();
-            PlayerAnimatorManager.Instance.ChangeCrouchState(true);
-        }
-    }
-    
-    private void ExitCrouchState()
-    {
-        if (isGetDown)
-        {
-            isGetDown = false;
-            ResetColliderSize();
-            PlayerAnimatorManager.Instance.ChangeCrouchState(false);
-        }
-    }
-    
-    private void ModifyColliderForCrouch()
-    {
-        boxCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / 2);
-        boxCollider.offset = new Vector2(originalColliderOffset.x, 
-            originalColliderOffset.y - (originalColliderSize.y - boxCollider.size.y) / 2);
-    }
-    
-    private void ResetColliderSize()
-    {
-        boxCollider.size = originalColliderSize;
-        boxCollider.offset = originalColliderOffset;
     }
     #endregion
     
@@ -329,58 +274,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     }
     #endregion
     
-    #region Push System  
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        bool tempCanPush = false;
-        
-        foreach (ContactPoint2D contact in collision.contacts)
-        {
-            Vector2 normal = contact.normal;
-            
-            if (contact.collider.CompareTag("Box") && isGrounded && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f)
-            {
-                if (Mathf.Abs(normal.y) < 0.1f) // 水平碰撞
-                {
-                    tempCanPush = true;
-                    pushBox = contact.collider.gameObject;
-                }
-            }
-        }
-        
-        canPush = tempCanPush;
-    }
-    
-    private void UpdatePushState()
-    {
-        if (pushBox != null && isGrounded && canPush)
-        {
-            float horizontal = Input.GetAxis("Horizontal");
-            
-            if (Mathf.Abs(horizontal) > 0.1f && Mathf.Sign(horizontal) == facing)
-            {
-                if (!isPushing)
-                {
-                    isPushing = true;
-                    pushBox.transform.SetParent(transform);
-                    pushBox.GetComponent<BoxPushed>()?.SetPushed(true);
-                }
-            }
-            else if (Mathf.Abs(horizontal) < 0.1f)
-            {
-                if (isPushing)
-                {
-                    isPushing = false;
-                    pushBox.transform.SetParent(null);
-                    pushBox.GetComponent<BoxPushed>()?.SetPushed(false);
-                }
-            }
-        }
-        
-        PlayerAnimatorManager.Instance.ChangePushState(isPushing);
-    }
-    #endregion
-    
     #region Interaction System
     private void UpdateInteraction()
     {
@@ -416,6 +309,19 @@ public class PlayerController : MonoSingleton<PlayerController>
         transform.localScale = scale;
     }
     
+    private void ModifyColliderForCrouch()
+    {
+        boxCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / 2);
+        boxCollider.offset = new Vector2(originalColliderOffset.x, 
+            originalColliderOffset.y - (originalColliderSize.y - boxCollider.size.y) / 2);
+    }
+    
+    private void ResetColliderSize()
+    {
+        boxCollider.size = originalColliderSize;
+        boxCollider.offset = originalColliderOffset;
+    }
+    
     #region Public API for Abilities
     public void SetVelocity(float x, float y)
     {
@@ -438,21 +344,9 @@ public class PlayerController : MonoSingleton<PlayerController>
     }
     #endregion
     
-    #region Ability Management
+    #region Ability Registry Access (For AbilityManager)
     /// <summary>
-    /// 获取指定类型的能力
-    /// </summary>
-    public T GetAbility<T>() where T : PlayerAbility
-    {
-        if (typeof(T) == typeof(MovementAbility)) return _movementAbility as T;
-        if (typeof(T) == typeof(JumpAbility)) return _jumpAbility as T;
-        if (typeof(T) == typeof(IronBlockAbility)) return _ironBlockAbility as T;
-        if (typeof(T) == typeof(BalloonAbility)) return _balloonAbility as T;
-        return null;
-    }
-    
-    /// <summary>
-    /// 通过能力类型标识符获取能力（解耦方式）
+    /// 获取指定类型的能力实例（供AbilityManager使用）
     /// </summary>
     public PlayerAbility GetAbilityByTypeId(string abilityTypeId)
     {
@@ -461,167 +355,11 @@ public class PlayerController : MonoSingleton<PlayerController>
     }
     
     /// <summary>
-    /// 获取所有已注册的能力
+    /// 获取所有已注册的能力实例（供AbilityManager使用）
     /// </summary>
     public Dictionary<string, PlayerAbility> GetAllAbilities()
     {
         return new Dictionary<string, PlayerAbility>(_abilityRegistry);
-    }
-    
-    public bool HasAbility<T>() where T : PlayerAbility
-    {
-        return GetAbility<T>() != null;
-    }
-    
-    /// <summary>
-    /// 检查是否具有指定类型标识符的能力
-    /// </summary>
-    public bool HasAbilityByTypeId(string abilityTypeId)
-    {
-        return _abilityRegistry.ContainsKey(abilityTypeId);
-    }
-    
-    public void EnableAbility<T>() where T : PlayerAbility
-    {
-        var ability = GetAbility<T>();
-        if (ability != null)
-        {
-            EnableAbilityByTypeId(ability.AbilityTypeId);
-        }
-    }
-    
-    /// <summary>
-    /// 通过能力类型标识符启用能力（解耦方式）
-    /// </summary>
-    public void EnableAbilityByTypeId(string abilityTypeId)
-    {
-        var ability = GetAbilityByTypeId(abilityTypeId);
-        if (ability != null && !ability.isEnabled)
-        {
-            ability.isEnabled = true;
-            
-            // 通知AbilityManager状态变化
-            NotifyAbilityStateChanged(abilityTypeId, true);
-        }
-    }
-    
-    public void DisableAbility<T>() where T : PlayerAbility
-    {
-        var ability = GetAbility<T>();
-        if (ability != null)
-        {
-            DisableAbilityByTypeId(ability.AbilityTypeId);
-        }
-    }
-    
-    /// <summary>
-    /// 通过能力类型标识符禁用能力（解耦方式）
-    /// </summary>
-    public void DisableAbilityByTypeId(string abilityTypeId)
-    {
-        var ability = GetAbilityByTypeId(abilityTypeId);
-        if (ability != null && ability.isEnabled)
-        {
-            ability.isEnabled = false;
-            
-            // 通知AbilityManager状态变化
-            NotifyAbilityStateChanged(abilityTypeId, false);
-        }
-    }
-    
-    public void ToggleAbility<T>() where T : PlayerAbility
-    {
-        var ability = GetAbility<T>();
-        if (ability != null)
-        {
-            if (ability.isEnabled)
-                DisableAbilityByTypeId(ability.AbilityTypeId);
-            else
-                EnableAbilityByTypeId(ability.AbilityTypeId);
-        }
-    }
-    
-    /// <summary>
-    /// 通过能力类型标识符切换能力状态
-    /// </summary>
-    public void ToggleAbilityByTypeId(string abilityTypeId)
-    {
-        var ability = GetAbilityByTypeId(abilityTypeId);
-        if (ability != null)
-        {
-            if (ability.isEnabled)
-                DisableAbilityByTypeId(abilityTypeId);
-            else
-                EnableAbilityByTypeId(abilityTypeId);
-        }
-    }
-    
-    /// <summary>
-    /// 通过能力类型启用能力（供AbilityManager调用，兼容性方法）
-    /// </summary>
-    public void EnableAbilityByType(AbilityManager.AbilityType abilityType)
-    {
-        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
-        if (!string.IsNullOrEmpty(abilityTypeId))
-        {
-            EnableAbilityByTypeId(abilityTypeId);
-        }
-    }
-    
-    /// <summary>
-    /// 通过能力类型禁用能力（供AbilityManager调用，兼容性方法）
-    /// </summary>
-    public void DisableAbilityByType(AbilityManager.AbilityType abilityType)
-    {
-        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
-        if (!string.IsNullOrEmpty(abilityTypeId))
-        {
-            DisableAbilityByTypeId(abilityTypeId);
-        }
-    }
-    
-    /// <summary>
-    /// 检查指定类型的能力是否启用（兼容性方法）
-    /// </summary>
-    public bool IsAbilityEnabled(AbilityManager.AbilityType abilityType)
-    {
-        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
-        return !string.IsNullOrEmpty(abilityTypeId) && IsAbilityEnabledByTypeId(abilityTypeId);
-    }
-    
-    /// <summary>
-    /// 检查指定类型标识符的能力是否启用
-    /// </summary>
-    public bool IsAbilityEnabledByTypeId(string abilityTypeId)
-    {
-        var ability = GetAbilityByTypeId(abilityTypeId);
-        return ability != null && ability.isEnabled;
-    }
-    
-    /// <summary>
-    /// 转换AbilityManager.AbilityType到字符串标识符
-    /// </summary>
-    private string ConvertAbilityTypeToId(AbilityManager.AbilityType abilityType)
-    {
-        switch (abilityType)
-        {
-            case AbilityManager.AbilityType.Movement: return "Movement";
-            case AbilityManager.AbilityType.Jump: return "Jump";
-            case AbilityManager.AbilityType.IronBlock: return "IronBlock";
-            case AbilityManager.AbilityType.Balloon: return "Balloon";
-            default: return null;
-        }
-    }
-    
-    /// <summary>
-    /// 通知AbilityManager能力状态变化（新版本）
-    /// </summary>
-    private void NotifyAbilityStateChanged(string abilityTypeId, bool enabled)
-    {
-        if (abilityManager != null)
-        {
-            abilityManager.OnAbilityStateChanged(abilityTypeId, enabled);
-        }
     }
     
     /// <summary>
@@ -648,13 +386,6 @@ public class PlayerController : MonoSingleton<PlayerController>
         PlayerAnimatorManager.Instance.ChangePushState(false);
         PlayerAnimatorManager.Instance.Init();
         
-        // 解除推箱子绑定
-        if (pushBox != null)
-        {
-            pushBox.transform.SetParent(null);
-            pushBox = null;
-        }
-        
         // 重置碰撞器
         ResetColliderSize();
     }
@@ -667,6 +398,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     
     // 兼容旧版本的属性访问
     public bool isGround => IsGrounded;
-    public bool isRun => _movementAbility.IsRunning;
+    public bool isRun => abilityManager?.IsAbilityActive("Movement") == true && _movementAbility.IsRunning;
     public float moveSpeed => _movementAbility.GetCurrentSpeed();
 }

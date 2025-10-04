@@ -89,8 +89,7 @@ public class JumpAbility : PlayerAbility
         float modifiedPower = jumpPower;
         
         // 检查是否有铁块能力影响
-        if (playerController.HasAbility<IronBlockAbility>() && 
-            playerController.GetAbility<IronBlockAbility>().isEnabled)
+        if (AbilityManager.Instance.activeAbilities.Contains("IronBlock"))
         {
             modifiedPower *= 0.6f; // 铁块状态下跳跃力减弱
         }

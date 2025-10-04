@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using Image = UnityEngine.UIElements.Image;
 
 /// <summary>
 /// 玩家能力基类，所有能力都继承此类
@@ -8,6 +10,11 @@ public abstract class PlayerAbility
 {
     [Header("能力基础设置")]
     public string abilityName;
+
+    public Sprite icon;
+
+    public Color color;
+    
     [SerializeField] private bool _isEnabled = true;
     
     /// <summary>
