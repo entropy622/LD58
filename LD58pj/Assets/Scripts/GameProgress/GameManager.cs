@@ -77,7 +77,7 @@ public class GameManager : MonoSingleton<GameManager>
         {
             isGamePaused = true;
             Time.timeScale = 0; // 暂停游戏
-            PlayControl.Instance.ActionDie();
+            PlayerController.Instance.ActionDie();
             if (!e.skipMessage)
             {
                 UIManager.Instance.ShowDeathMessage();

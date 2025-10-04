@@ -1,23 +1,22 @@
 using UnityEngine;
 
 /// <summary>
-/// 气球能力 - 降低密度，缓慢下落或漂浮
+/// 气球能力 - 滑翔能力，类似奥日的羽毛效果
+/// 长按空格键时减缓下落速度，不按时正常下落
 /// </summary>
 [System.Serializable]
 public class BalloonAbility : PlayerAbility
 {
-    [Header("气球属性")]
-    public float massReduction = 0.3f; // 质量减少到30%
-    public float gravityReduction = 0.2f; // 重力减少到20%
-    public float floatForce = 2f; // 漂浮力
-    public float slowFallMultiplier = 0.3f; // 慢速下落倍数
+    [Header("滑翔属性")]
+    public float glideGravityScale = 0.15f; // 滑翔时的重力倍数
+    public float glideFallSpeed = 2f; // 滑翔时的最大下降速度
+    public float normalFallSpeed = 10f; // 正常下降的最大速度
     
     [Header("控制设置")]
-    public KeyCode floatKey = KeyCode.Space; // 漂浮键
+    public KeyCode glideKey = KeyCode.Space; // 滑翔键
     
-    private float originalMass;
     private float originalGravityScale;
-    private bool isFloating;
+    private bool isGliding; // 是否正在滑翔
     
     public override void Initialize(PlayerController controller)
     {
@@ -25,7 +24,6 @@ public class BalloonAbility : PlayerAbility
         abilityName = "气球";
         
         // 记录原始属性
-        originalMass = playerController.GetRigidbody().mass;
         originalGravityScale = playerController.GetRigidbody().gravityScale;
     }
     
@@ -33,73 +31,85 @@ public class BalloonAbility : PlayerAbility
     {
         if (!isEnabled) return;
         
-        HandleFloatInput();
-        ApplySlowFall();
+        HandleGlideInput();
+        ApplyGlideEffect();
     }
     
     public override void OnAbilityActivated()
     {
-        ModifyPhysicsProperties();
+        // 气球能力激活时不修改物理属性，只在滑翔时才修改
     }
     
     public override void OnAbilityDeactivated()
     {
         ResetPhysicsProperties();
-        isFloating = false;
+        isGliding = false;
     }
     
-    private void HandleFloatInput()
+    /// <summary>
+    /// 处理滑翔输入
+    /// </summary>
+    private void HandleGlideInput()
     {
-        // 检查漂浮输入（长按空格键）
-        if (Input.GetKey(floatKey) && !playerController.IsGrounded)
+        // 检查滑翔输入（长按空格键）
+        bool wantsToGlide = Input.GetKey(glideKey) && !playerController.IsGrounded;
+        
+        if (wantsToGlide && !isGliding)
         {
-            isFloating = true;
-            ApplyFloatForce();
+            StartGlide();
         }
-        else
+        else if (!wantsToGlide && isGliding)
         {
-            isFloating = false;
+            StopGlide();
         }
     }
     
-    private void ApplyFloatForce()
+    /// <summary>
+    /// 开始滑翔
+    /// </summary>
+    private void StartGlide()
     {
+        isGliding = true;
+        ModifyPhysicsProperties();
+    }
+    
+    /// <summary>
+    /// 停止滑翔
+    /// </summary>
+    private void StopGlide()
+    {
+        isGliding = false;
+        ResetPhysicsProperties();
+    }
+    
+    /// <summary>
+    /// 应用滑翔效果
+    /// </summary>
+    private void ApplyGlideEffect()
+    {
+        if (!isGliding) return;
+        
         var rb = playerController.GetRigidbody();
         
-        // 应用向上的漂浮力
-        rb.AddForce(Vector2.up * floatForce, ForceMode2D.Force);
-        
-        // 限制上升速度
-        if (rb.velocity.y > 3f)
+        // 限制下降速度
+        if (rb.velocity.y < -glideFallSpeed)
         {
-            rb.velocity = new Vector2(rb.velocity.x, 3f);
-        }
-    }
-    
-    private void ApplySlowFall()
-    {
-        var rb = playerController.GetRigidbody();
-        
-        // 如果正在下落且速度过快，应用慢速下落
-        if (rb.velocity.y < -2f && !playerController.IsGrounded)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * slowFallMultiplier);
+            rb.velocity = new Vector2(rb.velocity.x, -glideFallSpeed);
         }
     }
     
     public override void ModifyPhysicsProperties()
     {
         var rb = playerController.GetRigidbody();
-        rb.mass = originalMass * massReduction;
-        rb.gravityScale = originalGravityScale * gravityReduction;
+        // 只在滑翔时修改重力
+        rb.gravityScale = originalGravityScale * glideGravityScale;
     }
     
     public override void ResetPhysicsProperties()
     {
         var rb = playerController.GetRigidbody();
-        rb.mass = originalMass;
         rb.gravityScale = originalGravityScale;
     }
     
-    public bool IsFloating => isFloating;
+    public bool IsGliding => isGliding;
 }

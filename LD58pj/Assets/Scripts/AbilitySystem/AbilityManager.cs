@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 /// <summary>
 /// 能力管理器 - 管理玩家的能力装备和切换
@@ -15,7 +17,8 @@ public class AbilityManager : MonoBehaviour
     public Transform abilitySlotParent;
     public GameObject abilitySlotPrefab;
     
-    private PlayerController playerController;
+    // 玩家控制器引用
+    private PlayerController registeredPlayerController;
     private List<Image> abilitySlotImages = new List<Image>();
     
     public enum AbilityType
@@ -41,12 +44,29 @@ public class AbilityManager : MonoBehaviour
     
     void Start()
     {
-        playerController = PlayerController.Instance;
         InitializeAbilitySlots();
         
-        // 默认装备移动和跳跃能力
-        EquipAbility(AbilityType.Movement, 0);
-        EquipAbility(AbilityType.Jump, 1);
+        // 等待PlayerController初始化后再设置默认能力
+        StartCoroutine(SetupDefaultAbilitiesCoroutine());
+    }
+    
+    private System.Collections.IEnumerator SetupDefaultAbilitiesCoroutine()
+    {
+        // 等待一帧，确保PlayerController已初始化
+        yield return null;
+        
+        // 如果没有注册PlayerController，尝试查找
+        if (registeredPlayerController == null)
+        {
+            registeredPlayerController = PlayerController.Instance;
+        }
+        
+        // 设置默认能力
+        if (registeredPlayerController != null)
+        {
+            EquipAbility(AbilityType.Movement, 0);
+            EquipAbility(AbilityType.Jump, 1);
+        }
     }
     
     void Update()
@@ -126,29 +146,15 @@ public class AbilityManager : MonoBehaviour
     
     private void ActivateAbility(AbilityType abilityType, bool activate)
     {
-        if (playerController == null) return;
+        if (registeredPlayerController == null) return;
         
-        switch (abilityType)
+        if (activate)
         {
-            case AbilityType.Movement:
-                if (activate) playerController.EnableAbility<MovementAbility>();
-                else playerController.DisableAbility<MovementAbility>();
-                break;
-                
-            case AbilityType.Jump:
-                if (activate) playerController.EnableAbility<JumpAbility>();
-                else playerController.DisableAbility<JumpAbility>();
-                break;
-                
-            case AbilityType.IronBlock:
-                if (activate) playerController.EnableAbility<IronBlockAbility>();
-                else playerController.DisableAbility<IronBlockAbility>();
-                break;
-                
-            case AbilityType.Balloon:
-                if (activate) playerController.EnableAbility<BalloonAbility>();
-                else playerController.DisableAbility<BalloonAbility>();
-                break;
+            registeredPlayerController.EnableAbilityByType(abilityType);
+        }
+        else
+        {
+            registeredPlayerController.DisableAbilityByType(abilityType);
         }
     }
     
@@ -269,6 +275,79 @@ public class AbilityManager : MonoBehaviour
         ActivateAbility(abilityB, false);
         ActivateAbility(abilityA, true);
         ActivateAbility(abilityB, true);
+        
+        UpdateUI();
+    }
+    
+    /// <summary>
+    /// 注册PlayerController（由PlayerController调用）
+    /// </summary>
+    public void RegisterPlayerController(PlayerController controller)
+    {
+        registeredPlayerController = controller;
+        Debug.Log("PlayerController已注册到AbilityManager");
+    }
+    
+    /// <summary>
+    /// 处理能力状态变化（由PlayerController调用）
+    /// </summary>
+    public void OnAbilityStateChanged(AbilityType abilityType, bool enabled)
+    {
+        // 更新UI显示
+        UpdateUI();
+        
+        // 可以在这里添加其他响应逻辑，比如播放声音、显示提示等
+        Debug.Log($"能力{abilityType} {(enabled ? "已启用" : "已禁用")}");
+    }
+    
+    /// <summary>
+    /// 获取当前装备的能力列表
+    /// </summary>
+    public List<AbilityType> GetEquippedAbilities()
+    {
+        return new List<AbilityType>(equippedAbilities);
+    }
+    
+    /// <summary>
+    /// 获取指定槽位的能力
+    /// </summary>
+    public AbilityType GetAbilityInSlot(int slotIndex)
+    {
+        if (slotIndex >= 0 && slotIndex < equippedAbilities.Count)
+            return equippedAbilities[slotIndex];
+        return AbilityType.None;
+    }
+    
+    /// <summary>
+    /// 检查指定能力是否正在使用（通过PlayerController检查实际状态）
+    /// </summary>
+    public bool IsAbilityActive(AbilityType abilityType)
+    {
+        if (registeredPlayerController == null) return false;
+        return registeredPlayerController.IsAbilityEnabled(abilityType);
+    }
+    
+    /// <summary>
+    /// 强制同步能力状态（确保AbilityManager与PlayerController一致）
+    /// </summary>
+    public void SyncAbilityStates()
+    {
+        if (registeredPlayerController == null) return;
+        
+        for (int i = 0; i < equippedAbilities.Count; i++)
+        {
+            AbilityType abilityType = equippedAbilities[i];
+            if (abilityType != AbilityType.None)
+            {
+                bool shouldBeEnabled = true; // 装备的能力应该被启用
+                bool isCurrentlyEnabled = registeredPlayerController.IsAbilityEnabled(abilityType);
+                
+                if (shouldBeEnabled != isCurrentlyEnabled)
+                {
+                    ActivateAbility(abilityType, shouldBeEnabled);
+                }
+            }
+        }
         
         UpdateUI();
     }

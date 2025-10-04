@@ -33,9 +33,10 @@
 - 参数：massMultiplier、gravityMultiplier、jumpReduction
 
 #### BalloonAbility（气球能力）
-- 降低角色密度
-- 支持漂浮和缓慢下落
-- 参数：massReduction、gravityReduction、floatForce
+- 滑翔能力，类似奥日的羽毛效果
+- 长按空格键时减缓下落速度
+- 不按空格键时正常下落
+- 参数：glideGravityScale、glideFallSpeed
 
 ### 3. AbilityManager（能力管理器）
 - 管理能力槽系统（默认2个槽位）

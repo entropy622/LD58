@@ -60,7 +60,8 @@ public class MovementAbility : PlayerAbility
         if (Mathf.Abs(horizontal) > 0.1f)
         {
             playerController.SetVelocity(horizontal * currentSpeed, playerController.GetVelocity().y);
-            playerController.SetFacing(horizontal > 0 ? 1 : -1);
+            // 只在移动时更新朝向，避免与主控制器冲突
+            // playerController.SetFacing(horizontal > 0 ? 1 : -1);
         }
         else
         {

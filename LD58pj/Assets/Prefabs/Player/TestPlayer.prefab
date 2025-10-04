@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1dd5a5bcbc5c4947ac21326fc917129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSR: {fileID: 0}
+  playerSR: {fileID: 22500611000771908}
   crouchSpeed: 1
   rollPower: 1
   rollDuration: 0.5
