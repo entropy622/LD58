@@ -22,6 +22,9 @@ public class PlayerController : MonoSingleton<PlayerController>
     [Header("能力管理器")]
     [SerializeField] private AbilityManager abilityManager;
     
+    // 能力系统字典，用于解耦能力类型管理
+    private Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
+    
     [Header("能力系统")]
     [Space(10)]
     [SerializeField] private MovementAbility _movementAbility = new MovementAbility();
@@ -140,10 +143,28 @@ public class PlayerController : MonoSingleton<PlayerController>
     
     private void InitializeAbilities()
     {
+        // 初始化所有能力
         _movementAbility.Initialize(this);
         _jumpAbility.Initialize(this);
         _ironBlockAbility.Initialize(this);
         _balloonAbility.Initialize(this);
+        
+        // 注册能力到字典中
+        RegisterAbility(_movementAbility);
+        RegisterAbility(_jumpAbility);
+        RegisterAbility(_ironBlockAbility);
+        RegisterAbility(_balloonAbility);
+    }
+    
+    /// <summary>
+    /// 注册能力到管理字典
+    /// </summary>
+    private void RegisterAbility(PlayerAbility ability)
+    {
+        if (ability != null && !string.IsNullOrEmpty(ability.AbilityTypeId))
+        {
+            _abilityRegistry[ability.AbilityTypeId] = ability;
+        }
     }
     
     private void InitializeAbilityManager()
@@ -151,7 +172,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         // 如果没有手动指定AbilityManager，尝试获取实例
         if (abilityManager == null)
         {
-            abilityManager = FindObjectOfType<AbilityManager>();
+            abilityManager = AbilityManager.Instance;
             if (abilityManager == null)
             {
                 Debug.LogWarning("AbilityManager未找到，能力槽系统将不会工作");
@@ -418,6 +439,9 @@ public class PlayerController : MonoSingleton<PlayerController>
     #endregion
     
     #region Ability Management
+    /// <summary>
+    /// 获取指定类型的能力
+    /// </summary>
     public T GetAbility<T>() where T : PlayerAbility
     {
         if (typeof(T) == typeof(MovementAbility)) return _movementAbility as T;
@@ -427,34 +451,81 @@ public class PlayerController : MonoSingleton<PlayerController>
         return null;
     }
     
+    /// <summary>
+    /// 通过能力类型标识符获取能力（解耦方式）
+    /// </summary>
+    public PlayerAbility GetAbilityByTypeId(string abilityTypeId)
+    {
+        _abilityRegistry.TryGetValue(abilityTypeId, out PlayerAbility ability);
+        return ability;
+    }
+    
+    /// <summary>
+    /// 获取所有已注册的能力
+    /// </summary>
+    public Dictionary<string, PlayerAbility> GetAllAbilities()
+    {
+        return new Dictionary<string, PlayerAbility>(_abilityRegistry);
+    }
+    
     public bool HasAbility<T>() where T : PlayerAbility
     {
         return GetAbility<T>() != null;
     }
     
+    /// <summary>
+    /// 检查是否具有指定类型标识符的能力
+    /// </summary>
+    public bool HasAbilityByTypeId(string abilityTypeId)
+    {
+        return _abilityRegistry.ContainsKey(abilityTypeId);
+    }
+    
     public void EnableAbility<T>() where T : PlayerAbility
     {
         var ability = GetAbility<T>();
+        if (ability != null)
+        {
+            EnableAbilityByTypeId(ability.AbilityTypeId);
+        }
+    }
+    
+    /// <summary>
+    /// 通过能力类型标识符启用能力（解耦方式）
+    /// </summary>
+    public void EnableAbilityByTypeId(string abilityTypeId)
+    {
+        var ability = GetAbilityByTypeId(abilityTypeId);
         if (ability != null && !ability.isEnabled)
         {
             ability.isEnabled = true;
-            ability.OnAbilityActivated();
             
-            // 通知AbilityManager能力状态变化
-            NotifyAbilityStateChanged<T>(true);
+            // 通知AbilityManager状态变化
+            NotifyAbilityStateChanged(abilityTypeId, true);
         }
     }
     
     public void DisableAbility<T>() where T : PlayerAbility
     {
         var ability = GetAbility<T>();
+        if (ability != null)
+        {
+            DisableAbilityByTypeId(ability.AbilityTypeId);
+        }
+    }
+    
+    /// <summary>
+    /// 通过能力类型标识符禁用能力（解耦方式）
+    /// </summary>
+    public void DisableAbilityByTypeId(string abilityTypeId)
+    {
+        var ability = GetAbilityByTypeId(abilityTypeId);
         if (ability != null && ability.isEnabled)
         {
             ability.isEnabled = false;
-            ability.OnAbilityDeactivated();
             
-            // 通知AbilityManager能力状态变化
-            NotifyAbilityStateChanged<T>(false);
+            // 通知AbilityManager状态变化
+            NotifyAbilityStateChanged(abilityTypeId, false);
         }
     }
     
@@ -464,97 +535,92 @@ public class PlayerController : MonoSingleton<PlayerController>
         if (ability != null)
         {
             if (ability.isEnabled)
-                DisableAbility<T>();
+                DisableAbilityByTypeId(ability.AbilityTypeId);
             else
-                EnableAbility<T>();
+                EnableAbilityByTypeId(ability.AbilityTypeId);
         }
     }
     
     /// <summary>
-    /// 通过能力类型启用能力（供AbilityManager调用）
+    /// 通过能力类型标识符切换能力状态
+    /// </summary>
+    public void ToggleAbilityByTypeId(string abilityTypeId)
+    {
+        var ability = GetAbilityByTypeId(abilityTypeId);
+        if (ability != null)
+        {
+            if (ability.isEnabled)
+                DisableAbilityByTypeId(abilityTypeId);
+            else
+                EnableAbilityByTypeId(abilityTypeId);
+        }
+    }
+    
+    /// <summary>
+    /// 通过能力类型启用能力（供AbilityManager调用，兼容性方法）
     /// </summary>
     public void EnableAbilityByType(AbilityManager.AbilityType abilityType)
     {
-        switch (abilityType)
+        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
+        if (!string.IsNullOrEmpty(abilityTypeId))
         {
-            case AbilityManager.AbilityType.Movement:
-                EnableAbility<MovementAbility>();
-                break;
-            case AbilityManager.AbilityType.Jump:
-                EnableAbility<JumpAbility>();
-                break;
-            case AbilityManager.AbilityType.IronBlock:
-                EnableAbility<IronBlockAbility>();
-                break;
-            case AbilityManager.AbilityType.Balloon:
-                EnableAbility<BalloonAbility>();
-                break;
+            EnableAbilityByTypeId(abilityTypeId);
         }
     }
     
     /// <summary>
-    /// 通过能力类型禁用能力（供AbilityManager调用）
+    /// 通过能力类型禁用能力（供AbilityManager调用，兼容性方法）
     /// </summary>
     public void DisableAbilityByType(AbilityManager.AbilityType abilityType)
     {
-        switch (abilityType)
+        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
+        if (!string.IsNullOrEmpty(abilityTypeId))
         {
-            case AbilityManager.AbilityType.Movement:
-                DisableAbility<MovementAbility>();
-                break;
-            case AbilityManager.AbilityType.Jump:
-                DisableAbility<JumpAbility>();
-                break;
-            case AbilityManager.AbilityType.IronBlock:
-                DisableAbility<IronBlockAbility>();
-                break;
-            case AbilityManager.AbilityType.Balloon:
-                DisableAbility<BalloonAbility>();
-                break;
+            DisableAbilityByTypeId(abilityTypeId);
         }
     }
     
     /// <summary>
-    /// 检查指定类型的能力是否启用
+    /// 检查指定类型的能力是否启用（兼容性方法）
     /// </summary>
     public bool IsAbilityEnabled(AbilityManager.AbilityType abilityType)
     {
+        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
+        return !string.IsNullOrEmpty(abilityTypeId) && IsAbilityEnabledByTypeId(abilityTypeId);
+    }
+    
+    /// <summary>
+    /// 检查指定类型标识符的能力是否启用
+    /// </summary>
+    public bool IsAbilityEnabledByTypeId(string abilityTypeId)
+    {
+        var ability = GetAbilityByTypeId(abilityTypeId);
+        return ability != null && ability.isEnabled;
+    }
+    
+    /// <summary>
+    /// 转换AbilityManager.AbilityType到字符串标识符
+    /// </summary>
+    private string ConvertAbilityTypeToId(AbilityManager.AbilityType abilityType)
+    {
         switch (abilityType)
         {
-            case AbilityManager.AbilityType.Movement:
-                return _movementAbility.isEnabled;
-            case AbilityManager.AbilityType.Jump:
-                return _jumpAbility.isEnabled;
-            case AbilityManager.AbilityType.IronBlock:
-                return _ironBlockAbility.isEnabled;
-            case AbilityManager.AbilityType.Balloon:
-                return _balloonAbility.isEnabled;
-            default:
-                return false;
+            case AbilityManager.AbilityType.Movement: return "Movement";
+            case AbilityManager.AbilityType.Jump: return "Jump";
+            case AbilityManager.AbilityType.IronBlock: return "IronBlock";
+            case AbilityManager.AbilityType.Balloon: return "Balloon";
+            default: return null;
         }
     }
     
     /// <summary>
-    /// 通知AbilityManager能力状态变化
+    /// 通知AbilityManager能力状态变化（新版本）
     /// </summary>
-    private void NotifyAbilityStateChanged<T>(bool enabled) where T : PlayerAbility
+    private void NotifyAbilityStateChanged(string abilityTypeId, bool enabled)
     {
-        if (abilityManager == null) return;
-        
-        AbilityManager.AbilityType abilityType = AbilityManager.AbilityType.None;
-        
-        if (typeof(T) == typeof(MovementAbility))
-            abilityType = AbilityManager.AbilityType.Movement;
-        else if (typeof(T) == typeof(JumpAbility))
-            abilityType = AbilityManager.AbilityType.Jump;
-        else if (typeof(T) == typeof(IronBlockAbility))
-            abilityType = AbilityManager.AbilityType.IronBlock;
-        else if (typeof(T) == typeof(BalloonAbility))
-            abilityType = AbilityManager.AbilityType.Balloon;
-        
-        if (abilityType != AbilityManager.AbilityType.None)
+        if (abilityManager != null)
         {
-            abilityManager.OnAbilityStateChanged(abilityType, enabled);
+            abilityManager.OnAbilityStateChanged(abilityTypeId, enabled);
         }
     }
     

@@ -14,6 +14,8 @@ public class MovementAbility : PlayerAbility
     private float currentSpeed;
     private bool isRunning;
     
+    public override string AbilityTypeId => "Movement";
+    
     public override void Initialize(PlayerController controller)
     {
         base.Initialize(controller);

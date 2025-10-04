@@ -8,7 +8,7 @@ using UnityEngine;
 public class BalloonAbility : PlayerAbility
 {
     [Header("滑翔属性")]
-    public float glideGravityScale = 0.15f; // 滑翔时的重力倍数
+    public float glideGravityScale = 0.6f; // 滑翔时的重力倍数
     public float glideFallSpeed = 2f; // 滑翔时的最大下降速度
     public float normalFallSpeed = 10f; // 正常下降的最大速度
     
@@ -17,6 +17,8 @@ public class BalloonAbility : PlayerAbility
     
     private float originalGravityScale;
     private bool isGliding; // 是否正在滑翔
+    
+    public override string AbilityTypeId => "Balloon";
     
     public override void Initialize(PlayerController controller)
     {

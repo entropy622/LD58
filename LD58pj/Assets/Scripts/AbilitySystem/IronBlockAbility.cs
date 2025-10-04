@@ -14,6 +14,8 @@ public class IronBlockAbility : PlayerAbility
     private float originalMass;
     private float originalGravityScale;
     
+    public override string AbilityTypeId => "IronBlock";
+    
     public override void Initialize(PlayerController controller)
     {
         base.Initialize(controller);

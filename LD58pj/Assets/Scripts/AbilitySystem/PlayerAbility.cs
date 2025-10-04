@@ -11,6 +11,11 @@ public abstract class PlayerAbility
     [SerializeField] private bool _isEnabled = true;
     
     /// <summary>
+    /// 能力类型标识符，用于解耦能力类型管理
+    /// </summary>
+    public abstract string AbilityTypeId { get; }
+    
+    /// <summary>
     /// 能力是否启用（带有Inspector可视化支持）
     /// </summary>
     public bool isEnabled 

@@ -15,6 +15,8 @@ public class JumpAbility : PlayerAbility
     private float lastJumpPressedTime;
     private bool isJumping;
     
+    public override string AbilityTypeId => "Jump";
+    
     public override void Initialize(PlayerController controller)
     {
         base.Initialize(controller);

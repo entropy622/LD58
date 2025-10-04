@@ -3,15 +3,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using QFramework;
 
 /// <summary>
 /// 能力管理器 - 管理玩家的能力装备和切换
 /// </summary>
-public class AbilityManager : MonoBehaviour
+public class AbilityManager : MonoSingleton<AbilityManager>
 {
     [Header("能力槽设置")]
     public int maxAbilitySlots = 2;
-    public List<AbilityType> equippedAbilities = new List<AbilityType>();
+    public List<string> equippedAbilities = new List<string>(); // 使用字符串标识符代替AbilityType
     
     [Header("UI引用")]
     public Transform abilitySlotParent;
@@ -21,19 +22,13 @@ public class AbilityManager : MonoBehaviour
     private PlayerController registeredPlayerController;
     private List<Image> abilitySlotImages = new List<Image>();
     
-    public enum AbilityType
-    {
-        None,
-        Movement,
-        Jump,
-        IronBlock,
-        Balloon
-    }
+    // 能力状态同步机制
+    private bool isUpdatingFromPlayerController = false;
     
     [System.Serializable]
     public class AbilityData
     {
-        public AbilityType type;
+        public string abilityTypeId; // 使用字符串标识符
         public string name;
         public Sprite icon;
         public Color color = Color.white;
@@ -64,8 +59,8 @@ public class AbilityManager : MonoBehaviour
         // 设置默认能力
         if (registeredPlayerController != null)
         {
-            EquipAbility(AbilityType.Movement, 0);
-            EquipAbility(AbilityType.Jump, 1);
+            EquipAbility("Movement", 0);
+            EquipAbility("Jump", 1);
         }
     }
     
@@ -95,26 +90,27 @@ public class AbilityManager : MonoBehaviour
             // 确保装备列表有足够的位置
             if (equippedAbilities.Count <= i)
             {
-                equippedAbilities.Add(AbilityType.None);
+                equippedAbilities.Add(""); // 空字符串表示无能力
             }
         }
         
         UpdateUI();
     }
     
-    public bool EquipAbility(AbilityType abilityType, int slotIndex)
+    public bool EquipAbility(string abilityTypeId, int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= maxAbilitySlots) return false;
+        if (isUpdatingFromPlayerController) return true; // 避免循环更新
         
         // 取消装备旧能力
-        if (equippedAbilities[slotIndex] != AbilityType.None)
+        if (!string.IsNullOrEmpty(equippedAbilities[slotIndex]))
         {
             UnequipAbility(slotIndex);
         }
         
         // 装备新能力
-        equippedAbilities[slotIndex] = abilityType;
-        ActivateAbility(abilityType, true);
+        equippedAbilities[slotIndex] = abilityTypeId;
+        ActivateAbility(abilityTypeId, true);
         
         UpdateUI();
         return true;
@@ -123,38 +119,39 @@ public class AbilityManager : MonoBehaviour
     public void UnequipAbility(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= maxAbilitySlots) return;
+        if (isUpdatingFromPlayerController) return; // 避免循环更新
         
-        AbilityType abilityType = equippedAbilities[slotIndex];
-        if (abilityType != AbilityType.None)
+        string abilityTypeId = equippedAbilities[slotIndex];
+        if (!string.IsNullOrEmpty(abilityTypeId))
         {
-            ActivateAbility(abilityType, false);
-            equippedAbilities[slotIndex] = AbilityType.None;
+            ActivateAbility(abilityTypeId, false);
+            equippedAbilities[slotIndex] = "";
         }
         
         UpdateUI();
     }
     
-    public bool HasAbilityEquipped(AbilityType abilityType)
+    public bool HasAbilityEquipped(string abilityTypeId)
     {
-        return equippedAbilities.Contains(abilityType);
+        return equippedAbilities.Contains(abilityTypeId);
     }
     
-    public int GetAbilitySlotIndex(AbilityType abilityType)
+    public int GetAbilitySlotIndex(string abilityTypeId)
     {
-        return equippedAbilities.IndexOf(abilityType);
+        return equippedAbilities.IndexOf(abilityTypeId);
     }
     
-    private void ActivateAbility(AbilityType abilityType, bool activate)
+    private void ActivateAbility(string abilityTypeId, bool activate)
     {
-        if (registeredPlayerController == null) return;
+        if (registeredPlayerController == null || string.IsNullOrEmpty(abilityTypeId)) return;
         
         if (activate)
         {
-            registeredPlayerController.EnableAbilityByType(abilityType);
+            registeredPlayerController.EnableAbilityByTypeId(abilityTypeId);
         }
         else
         {
-            registeredPlayerController.DisableAbilityByType(abilityType);
+            registeredPlayerController.DisableAbilityByTypeId(abilityTypeId);
         }
     }
     
@@ -162,8 +159,8 @@ public class AbilityManager : MonoBehaviour
     {
         for (int i = 0; i < abilitySlotImages.Count && i < equippedAbilities.Count; i++)
         {
-            AbilityType abilityType = equippedAbilities[i];
-            AbilityData data = GetAbilityData(abilityType);
+            string abilityTypeId = equippedAbilities[i];
+            AbilityData data = GetAbilityData(abilityTypeId);
             
             if (data != null && data.icon != null)
             {
@@ -178,9 +175,9 @@ public class AbilityManager : MonoBehaviour
         }
     }
     
-    private AbilityData GetAbilityData(AbilityType abilityType)
+    private AbilityData GetAbilityData(string abilityTypeId)
     {
-        return abilityDataList.Find(data => data.type == abilityType);
+        return abilityDataList.Find(data => data.abilityTypeId == abilityTypeId);
     }
     
     // 调试用的快捷键
@@ -208,14 +205,14 @@ public class AbilityManager : MonoBehaviour
     {
         if (slotIndex >= equippedAbilities.Count) return;
         
-        AbilityType currentAbility = equippedAbilities[slotIndex];
-        if (currentAbility != AbilityType.None)
+        string currentAbility = equippedAbilities[slotIndex];
+        if (!string.IsNullOrEmpty(currentAbility))
         {
             UnequipAbility(slotIndex);
         }
         else
         {
-            EquipAbility(AbilityType.Movement, slotIndex); // 默认装备移动
+            EquipAbility("Movement", slotIndex); // 默认装备移动
         }
     }
     
@@ -223,40 +220,40 @@ public class AbilityManager : MonoBehaviour
     {
         if (slotIndex >= equippedAbilities.Count) return;
         
-        AbilityType currentAbility = equippedAbilities[slotIndex];
-        AbilityType nextAbility = GetNextAbilityType(currentAbility);
+        string currentAbility = equippedAbilities[slotIndex];
+        string nextAbility = GetNextAbilityTypeId(currentAbility);
         
         EquipAbility(nextAbility, slotIndex);
     }
     
-    private AbilityType GetNextAbilityType(AbilityType current)
+    private string GetNextAbilityTypeId(string current)
     {
         switch (current)
         {
-            case AbilityType.None: return AbilityType.Movement;
-            case AbilityType.Movement: return AbilityType.Jump;
-            case AbilityType.Jump: return AbilityType.IronBlock;
-            case AbilityType.IronBlock: return AbilityType.Balloon;
-            case AbilityType.Balloon: return AbilityType.None;
-            default: return AbilityType.Movement;
+            case "": return "Movement";
+            case "Movement": return "Jump";
+            case "Jump": return "IronBlock";
+            case "IronBlock": return "Balloon";
+            case "Balloon": return "";
+            default: return "Movement";
         }
     }
     
     // 外部API
-    public void PickupAbility(AbilityType abilityType)
+    public void PickupAbility(string abilityTypeId)
     {
         // 尝试在空槽位中装备能力
         for (int i = 0; i < maxAbilitySlots; i++)
         {
-            if (equippedAbilities[i] == AbilityType.None)
+            if (string.IsNullOrEmpty(equippedAbilities[i]))
             {
-                EquipAbility(abilityType, i);
+                EquipAbility(abilityTypeId, i);
                 return;
             }
         }
         
         // 如果没有空槽位，替换第一个槽位
-        EquipAbility(abilityType, 0);
+        EquipAbility(abilityTypeId, 0);
     }
     
     public void SwapAbilities(int slotA, int slotB)
@@ -264,17 +261,23 @@ public class AbilityManager : MonoBehaviour
         if (slotA < 0 || slotA >= maxAbilitySlots || 
             slotB < 0 || slotB >= maxAbilitySlots) return;
         
-        AbilityType abilityA = equippedAbilities[slotA];
-        AbilityType abilityB = equippedAbilities[slotB];
+        string abilityA = equippedAbilities[slotA];
+        string abilityB = equippedAbilities[slotB];
         
         equippedAbilities[slotA] = abilityB;
         equippedAbilities[slotB] = abilityA;
         
         // 重新激活能力
-        ActivateAbility(abilityA, false);
-        ActivateAbility(abilityB, false);
-        ActivateAbility(abilityA, true);
-        ActivateAbility(abilityB, true);
+        if (!string.IsNullOrEmpty(abilityA))
+        {
+            ActivateAbility(abilityA, false);
+            ActivateAbility(abilityA, true);
+        }
+        if (!string.IsNullOrEmpty(abilityB))
+        {
+            ActivateAbility(abilityB, false);
+            ActivateAbility(abilityB, true);
+        }
         
         UpdateUI();
     }
@@ -291,40 +294,62 @@ public class AbilityManager : MonoBehaviour
     /// <summary>
     /// 处理能力状态变化（由PlayerController调用）
     /// </summary>
-    public void OnAbilityStateChanged(AbilityType abilityType, bool enabled)
+    public void OnAbilityStateChanged(string abilityTypeId, bool enabled)
     {
+        isUpdatingFromPlayerController = true;
+        
+        // 检查是否需要同步装备状态
+        bool isEquipped = HasAbilityEquipped(abilityTypeId);
+        
+        if (enabled && !isEquipped)
+        {
+            // 能力被启用但未装备，尝试装备到空槽位
+            PickupAbility(abilityTypeId);
+        }
+        else if (!enabled && isEquipped)
+        {
+            // 能力被禁用但已装备，取消装备
+            int slotIndex = GetAbilitySlotIndex(abilityTypeId);
+            if (slotIndex >= 0)
+            {
+                equippedAbilities[slotIndex] = "";
+            }
+        }
+        
         // 更新UI显示
         UpdateUI();
         
+        isUpdatingFromPlayerController = false;
+        
         // 可以在这里添加其他响应逻辑，比如播放声音、显示提示等
-        Debug.Log($"能力{abilityType} {(enabled ? "已启用" : "已禁用")}");
+        Debug.Log($"能力{abilityTypeId} {(enabled ? "已启用" : "已禁用")}");
     }
     
     /// <summary>
     /// 获取当前装备的能力列表
     /// </summary>
-    public List<AbilityType> GetEquippedAbilities()
+    public List<string> GetEquippedAbilities()
     {
-        return new List<AbilityType>(equippedAbilities);
+        return new List<string>(equippedAbilities);
     }
     
     /// <summary>
     /// 获取指定槽位的能力
     /// </summary>
-    public AbilityType GetAbilityInSlot(int slotIndex)
+    public string GetAbilityInSlot(int slotIndex)
     {
         if (slotIndex >= 0 && slotIndex < equippedAbilities.Count)
             return equippedAbilities[slotIndex];
-        return AbilityType.None;
+        return "";
     }
     
     /// <summary>
     /// 检查指定能力是否正在使用（通过PlayerController检查实际状态）
     /// </summary>
-    public bool IsAbilityActive(AbilityType abilityType)
+    public bool IsAbilityActive(string abilityTypeId)
     {
         if (registeredPlayerController == null) return false;
-        return registeredPlayerController.IsAbilityEnabled(abilityType);
+        return registeredPlayerController.IsAbilityEnabledByTypeId(abilityTypeId);
     }
     
     /// <summary>
@@ -336,19 +361,94 @@ public class AbilityManager : MonoBehaviour
         
         for (int i = 0; i < equippedAbilities.Count; i++)
         {
-            AbilityType abilityType = equippedAbilities[i];
-            if (abilityType != AbilityType.None)
+            string abilityTypeId = equippedAbilities[i];
+            if (!string.IsNullOrEmpty(abilityTypeId))
             {
                 bool shouldBeEnabled = true; // 装备的能力应该被启用
-                bool isCurrentlyEnabled = registeredPlayerController.IsAbilityEnabled(abilityType);
+                bool isCurrentlyEnabled = registeredPlayerController.IsAbilityEnabledByTypeId(abilityTypeId);
                 
                 if (shouldBeEnabled != isCurrentlyEnabled)
                 {
-                    ActivateAbility(abilityType, shouldBeEnabled);
+                    ActivateAbility(abilityTypeId, shouldBeEnabled);
                 }
             }
         }
         
         UpdateUI();
     }
+    
+    #region Legacy Compatibility (Deprecated - Use string-based methods instead)
+    
+    public enum AbilityType
+    {
+        None,
+        Movement,
+        Jump,
+        IronBlock,
+        Balloon
+    }
+    
+    /// <summary>
+    /// 转换AbilityType到字符串标识符
+    /// </summary>
+    private string ConvertAbilityTypeToId(AbilityType abilityType)
+    {
+        switch (abilityType)
+        {
+            case AbilityType.Movement: return "Movement";
+            case AbilityType.Jump: return "Jump";
+            case AbilityType.IronBlock: return "IronBlock";
+            case AbilityType.Balloon: return "Balloon";
+            case AbilityType.None:
+            default: return "";
+        }
+    }
+    
+    /// <summary>
+    /// 转换字符串标识符到AbilityType
+    /// </summary>
+    private AbilityType ConvertIdToAbilityType(string abilityTypeId)
+    {
+        switch (abilityTypeId)
+        {
+            case "Movement": return AbilityType.Movement;
+            case "Jump": return AbilityType.Jump;
+            case "IronBlock": return AbilityType.IronBlock;
+            case "Balloon": return AbilityType.Balloon;
+            case "":
+            default: return AbilityType.None;
+        }
+    }
+    
+    /// <summary>
+    /// 装备能力（旧版本兼容）
+    /// </summary>
+    [System.Obsolete("Use EquipAbility(string abilityTypeId, int slotIndex) instead")]
+    public bool EquipAbility(AbilityType abilityType, int slotIndex)
+    {
+        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
+        return EquipAbility(abilityTypeId, slotIndex);
+    }
+    
+    /// <summary>
+    /// 获取能力（旧版本兼容）
+    /// </summary>
+    [System.Obsolete("Use PickupAbility(string abilityTypeId) instead")]
+    public void PickupAbility(AbilityType abilityType)
+    {
+        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
+        PickupAbility(abilityTypeId);
+    }
+    
+    /// <summary>
+    /// 检查能力是否激活（旧版本兼容）
+    /// </summary>
+    [System.Obsolete("Use IsAbilityActive(string abilityTypeId) instead")]
+    public bool IsAbilityActive(AbilityType abilityType)
+    {
+        string abilityTypeId = ConvertAbilityTypeToId(abilityType);
+        return IsAbilityActive(abilityTypeId);
+    }
+    
+    #endregion
 }
