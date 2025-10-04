@@ -94,11 +94,16 @@ public class PlayerController : MonoSingleton<PlayerController>
     public BoxCollider2D GetBoxCollider() => boxCollider;
     public float GetCrouchSpeed() => crouchSpeed;
     
-    void Start()
+    void Awake()
     {
+        // 提前初始化能力系统，让AbilityManager能在Start前获得完整的注册表
         InitializeComponents();
         InitializeAbilities();
         InitializeAbilityManager();
+    }
+    
+    void Start()
+    {
         SetupEventHandlers();
         
         groundLayer = LayerMask.GetMask("Ground");

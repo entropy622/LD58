@@ -29,6 +29,9 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     private PlayerController registeredPlayerController;
     private List<Image> abilitySlotImages = new List<Image>();
     
+    // 防止重复注册的标志位
+    private bool hasRegisteredPlayerController = false;
+    
     // Inspector变化检测
     private List<string> lastEquippedAbilities = new List<string>();
     private List<string> lastActiveAbilities = new List<string>();
@@ -52,20 +55,21 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     void Start()
     {
         InitializeAbilitySlots();
-        
-        // 等待PlayerController初始化后再设置默认能力
-        StartCoroutine(SetupDefaultAbilitiesCoroutine());
+        SetupDefaultAbilitiesCoroutine();
+        Debug.Log("abilities count: " + _abilityRegistry.Count);
     }
     
-    private System.Collections.IEnumerator SetupDefaultAbilitiesCoroutine()
+    private void SetupDefaultAbilitiesCoroutine()
     {
-        // 等待一帧，确保PlayerController已初始化
-        yield return null;
-        
         // 如果没有注册PlayerController，尝试查找
         if (registeredPlayerController == null)
         {
             registeredPlayerController = PlayerController.Instance;
+            if (registeredPlayerController != null && !hasRegisteredPlayerController)
+            {
+                // 如果找到了PlayerController但还没注册，手动注册
+                RegisterPlayerController(registeredPlayerController);
+            }
         }
         
         // 设置默认能力状态
@@ -513,7 +517,14 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     /// </summary>
     public void RegisterPlayerController(PlayerController controller)
     {
+        // 防止重复注册
+        if (hasRegisteredPlayerController && registeredPlayerController == controller)
+        {
+            return;
+        }
+        
         registeredPlayerController = controller;
+        hasRegisteredPlayerController = true;
         
         // 获取所有已注册的能力并更新本地注册表
         if (registeredPlayerController != null)
