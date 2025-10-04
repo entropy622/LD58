@@ -52,4 +52,12 @@ public class BoxPushed : StatedParameter<BoxPushed>
             rb.constraints = RigidbodyConstraints2D.FreezePositionX;
         }
     }
+    
+    /// <summary>
+    /// 兼容新控制器的方法
+    /// </summary>
+    public void SetPushed(bool pushed)
+    {
+        isBePushed = pushed;
+    }
 }
