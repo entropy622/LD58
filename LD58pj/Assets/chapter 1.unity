@@ -6615,8 +6615,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106395c63ae9f8a4aad10756d80b74c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAbilitySlots: 2
-  equippedAbilities: []
+  maxAbilitySlots: 50
+  equippedAbilities:
+  - Balloon
+  - Movement
+  - Jump
   activeAbilities: []
   abilitySlotParent: {fileID: 0}
   abilitySlotPrefab: {fileID: 0}

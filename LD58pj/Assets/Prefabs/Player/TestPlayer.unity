@@ -544,14 +544,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: "\u7F29\u5C0F"
   icon: {fileID: 21300000, guid: 8c9951366737242ab9011bf8d9177c29, type: 3}
-  color: {r: 0, g: 0, b: 0, a: 0}
+  color:
+    r: 0
+    g: 0
+    b: 0
+    a: 0
   _isEnabled: 1
+  playerController: {fileID: 0}
   shrinkScale: 0.5
   shrinkDuration: 0.3
   maintainMass: 0
   massMultiplier: 1
   jumpPowerMultiplier: 0.6
   speedMultiplier: 1.2
+  originalScale: {x: 0, y: 0, z: 0}
+  originalColliderSize: {x: 0, y: 0}
+  originalColliderOffset: {x: 0, y: 0}
+  originalMass: 0
+  isShrunken: 0
+  isTransitioning: 0
+  transitionTimer: 0
+  targetScale: {x: 0, y: 0, z: 0}
+  targetColliderSize: {x: 0, y: 0}
 --- !u!1 &2129220551
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,11 +600,9 @@ MonoBehaviour:
   - Balloon
   - Movement
   - Jump
-  - Shrink
   activeAbilities: []
   abilitySlotParent: {fileID: 0}
   abilitySlotPrefab: {fileID: 0}
-  playerAbilities: []
 --- !u!4 &2129220553
 Transform:
   m_ObjectHideFlags: 0
