@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
@@ -127,6 +128,13 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     {
         if (slotIndex < 0 || slotIndex >= maxAbilitySlots) return false;
         
+        // 验证能力ID有效性（空字符串表示卸载，允许通过）
+        if (!string.IsNullOrEmpty(abilityTypeId) && !IsValidAbilityId(abilityTypeId))
+        {
+            Debug.LogWarning($"[AbilityManager] 尝试装备无效的能力ID: {abilityTypeId}");
+            return false;
+        }
+        
         // 取消装备旧能力
         if (!string.IsNullOrEmpty(equippedAbilities[slotIndex]))
         {
@@ -177,6 +185,13 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     public void ActivateAbility(string abilityTypeId)
     {
         if (string.IsNullOrEmpty(abilityTypeId)) return;
+        
+        // 验证能力ID有效性
+        if (!IsValidAbilityId(abilityTypeId))
+        {
+            Debug.LogWarning($"[AbilityManager] 尝试激活无效的能力ID: {abilityTypeId}");
+            return;
+        }
         
         if (!activeAbilities.Contains(abilityTypeId))
         {
@@ -499,8 +514,22 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     public void RegisterPlayerController(PlayerController controller)
     {
         registeredPlayerController = controller;
-        playerAbilities = registeredPlayerController._abilityRegistry.Values.ToList();
-        Debug.Log("[AbilityManager] PlayerController已注册");
+        
+        // 获取所有已注册的能力并更新本地注册表
+        if (registeredPlayerController != null)
+        {
+            var playerAbilities = registeredPlayerController.GetAllAbilities();
+            _abilityRegistry.Clear();
+            foreach (var kvp in playerAbilities)
+            {
+                _abilityRegistry[kvp.Key] = kvp.Value;
+            }
+            
+            // 验证并清理无效的能力ID
+            ValidateAndCleanAbilityIds();
+        }
+        
+        Debug.Log($"[AbilityManager] PlayerController已注册，可用能力: {string.Join(", ", _abilityRegistry.Keys)}");
     }
     
     /// <summary>
@@ -511,5 +540,86 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         SyncAbilityCallbacks();
         UpdateUI();
         Debug.Log("[AbilityManager] 强制同步完成");
+    }
+    
+    /// <summary>
+    /// 验证并清理无效的能力ID
+    /// </summary>
+    private void ValidateAndCleanAbilityIds()
+    {
+        List<string> validAbilityIds = new List<string>(_abilityRegistry.Keys);
+        
+        // 清理装备能力中的无效ID
+        for (int i = 0; i < equippedAbilities.Count; i++)
+        {
+            string abilityId = equippedAbilities[i];
+            if (!string.IsNullOrEmpty(abilityId) && !validAbilityIds.Contains(abilityId))
+            {
+                Debug.LogWarning($"[AbilityManager] 装备列表中发现无效能力ID: {abilityId}，已清除");
+                equippedAbilities[i] = "";
+            }
+        }
+        
+        // 清理激活能力中的无效ID
+        int originalCount = activeAbilities.Count;
+        activeAbilities.RemoveAll(abilityId => 
+        {
+            bool isInvalid = !string.IsNullOrEmpty(abilityId) && !validAbilityIds.Contains(abilityId);
+            if (isInvalid)
+            {
+                Debug.LogWarning($"[AbilityManager] 激活列表中发现无效能力ID: {abilityId}，已清除");
+            }
+            return isInvalid;
+        });
+        
+        if (activeAbilities.Count != originalCount)
+        {
+            Debug.Log($"[AbilityManager] 已清理 {originalCount - activeAbilities.Count} 个无效的激活能力ID");
+        }
+    }
+    
+    /// <summary>
+    /// 检查能力ID是否有效
+    /// </summary>
+    public bool IsValidAbilityId(string abilityId)
+    {
+        return !string.IsNullOrEmpty(abilityId) && _abilityRegistry.ContainsKey(abilityId);
+    }
+    
+    /// <summary>
+    /// 获取所有有效的能力ID列表
+    /// </summary>
+    public List<string> GetValidAbilityIds()
+    {
+        return new List<string>(_abilityRegistry.Keys);
+    }
+    
+    /// <summary>
+    /// 安全地激活能力（会验证ID有效性）
+    /// </summary>
+    public bool SafeActivateAbility(string abilityTypeId)
+    {
+        if (!IsValidAbilityId(abilityTypeId))
+        {
+            Debug.LogError($"[AbilityManager] 无效的能力ID: {abilityTypeId}，无法激活");
+            return false;
+        }
+        
+        ActivateAbility(abilityTypeId);
+        return true;
+    }
+    
+    /// <summary>
+    /// 安全地装备能力（会验证ID有效性）
+    /// </summary>
+    public bool SafeEquipAbility(string abilityTypeId, int slotIndex)
+    {
+        if (!string.IsNullOrEmpty(abilityTypeId) && !IsValidAbilityId(abilityTypeId))
+        {
+            Debug.LogError($"[AbilityManager] 无效的能力ID: {abilityTypeId}，无法装备");
+            return false;
+        }
+        
+        return EquipAbility(abilityTypeId, slotIndex);
     }
 }
