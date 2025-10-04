@@ -34,7 +34,7 @@ public class JumpAbility : PlayerAbility
     private void HandleJumpInput()
     {
         // 记录跳跃输入时间
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W))
         {
             lastJumpPressedTime = Time.time;
         }
@@ -42,7 +42,6 @@ public class JumpAbility : PlayerAbility
         // 检查是否可以跳跃
         bool canJump = (Time.time - lastGroundedTime) <= coyoteTime && 
                       (Time.time - lastJumpPressedTime) <= jumpBufferTime &&
-                      !playerController.IsPushing && 
                       !playerController.IsGetDown;
         
         if (canJump && !isJumping)

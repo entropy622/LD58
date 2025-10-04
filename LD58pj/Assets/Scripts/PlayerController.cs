@@ -84,17 +84,11 @@ public class PlayerController : MonoSingleton<PlayerController>
         get => _movementAbility.runSpeed; 
         set => _movementAbility.runSpeed = value; 
     }
-    public float pushSpeed 
-    { 
-        get => _movementAbility.pushSpeed; 
-        set => _movementAbility.pushSpeed = value; 
-    }
     
     // 公共属性访问器
     public bool IsGrounded => isGrounded;
     public bool IsGetDown => isGetDown;
     public bool IsRolling => isRolling;
-    public bool IsPushing => isPushing;
     public int Facing => facing;
     public Rigidbody2D GetRigidbody() => rb;
     public BoxCollider2D GetBoxCollider() => boxCollider;
@@ -128,6 +122,9 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         // 物理更新AbilityManager指定的能力
         FixedUpdateActiveAbilities();
+        
+        // 防止卡在tile缝隙中的优化
+        PreventTileGapSticking();
     }
     
     private void InitializeComponents()
@@ -138,6 +135,40 @@ public class PlayerController : MonoSingleton<PlayerController>
         
         originalColliderSize = boxCollider.size;
         originalColliderOffset = boxCollider.offset;
+        
+        // 优化物理设置，提高操作手感
+        OptimizePhysicsSettings();
+    }
+    
+    /// <summary>
+    /// 优化物理设置，解决常见的移动问题
+    /// </summary>
+    private void OptimizePhysicsSettings()
+    {
+        if (rb != null)
+        {
+            // 冻结Z轴旋转，防止角色翻转
+            rb.freezeRotation = true;
+            
+            // 设置适当的阻力，提高停止响应
+            rb.drag = 2f;
+            
+            // 设置重力缩放，使跳跃更自然
+            rb.gravityScale = 2.5f;
+            
+            // 设置较小的角速度阻力
+            rb.angularDrag = 5f;
+        }
+        
+        if (boxCollider != null)
+        {
+            // 设置碰撞器边缘为圆角，减少卡住问题
+            // 注意：这需要在Inspector中手动设置或创建PhysicsMaterial2D
+            if (physicsMaterial == null)
+            {
+                Debug.LogWarning("建议为PlayerController的Collider添加PhysicsMaterial2D来优化物理表现");
+            }
+        }
     }
     
     private void InitializeAbilities()
@@ -231,25 +262,63 @@ public class PlayerController : MonoSingleton<PlayerController>
         }
     }
     
+    #region Movement Optimization
+    /// <summary>
+    /// 防止角色卡在tile缝隙中
+    /// </summary>
+    private void PreventTileGapSticking()
+    {
+        if (!isGrounded || Mathf.Abs(rb.velocity.x) < 0.1f) return;
+        
+        // 检测是否卡在缝隙中
+        Vector2 rayOrigin = new Vector2(transform.position.x, boxCollider.bounds.min.y - 0.01f);
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, 0.1f, groundLayer);
+        
+        if (hit.collider == null)
+        {
+            // 如果脚下没有地面但角色被认为在地上，可能卡在缝隙中
+            // 给予微小的向上推力
+            rb.AddForce(Vector2.up * 2f, ForceMode2D.Force);
+        }
+        
+        // 检测水平移动是否被阻挡
+        float horizontalInput = Input.GetAxis("Horizontal");
+        if (Mathf.Abs(horizontalInput) > 0.1f && Mathf.Abs(rb.velocity.x) < 0.5f)
+        {
+            // 有输入但速度很小，可能卡住了
+            Vector2 pushDirection = new Vector2(Mathf.Sign(horizontalInput), 0.2f);
+            rb.AddForce(pushDirection * 3f, ForceMode2D.Force);
+        }
+    }
+    #endregion
+    
     #region Ground Detection
     private void UpdateGroundDetection()
     {
+        // 使用更精确的地面检测，避免tile缝隙问题
         Vector3 center = boxCollider.bounds.center;
-        float width = boxCollider.bounds.extents.x;
-        float checkDistance = 0.1f;
+        float width = boxCollider.bounds.extents.x * 0.9f; // 稍微缩小检测范围
+        float height = boxCollider.bounds.extents.y;
+        float checkDistance = 0.05f; // 减小检测距离
         
-        Vector3 leftPoint = center + Vector3.left * width + Vector3.down * boxCollider.bounds.extents.y;
-        Vector3 rightPoint = center + Vector3.right * width + Vector3.down * boxCollider.bounds.extents.y;
+        // 多点检测，包括中心点
+        Vector3 leftPoint = center + Vector3.left * width + Vector3.down * height;
+        Vector3 rightPoint = center + Vector3.right * width + Vector3.down * height;
+        Vector3 centerPoint = center + Vector3.down * height;
         
-        isGrounded = Physics2D.Raycast(leftPoint, Vector2.down, checkDistance, groundLayer) ||
-                    Physics2D.Raycast(rightPoint, Vector2.down, checkDistance, groundLayer);
+        // 使用CapsuleCast进行更稳定的检测
+        bool leftGrounded = Physics2D.Raycast(leftPoint, Vector2.down, checkDistance, groundLayer);
+        bool rightGrounded = Physics2D.Raycast(rightPoint, Vector2.down, checkDistance, groundLayer);
+        bool centerGrounded = Physics2D.Raycast(centerPoint, Vector2.down, checkDistance, groundLayer);
         
-        // 检查头顶是否有障碍物
-        Vector3 leftTopPoint = center + Vector3.left * width + Vector3.up * boxCollider.bounds.extents.y;
-        Vector3 rightTopPoint = center + Vector3.right * width + Vector3.up * boxCollider.bounds.extents.y;
+        isGrounded = leftGrounded || rightGrounded || centerGrounded;
         
-        canStand = !Physics2D.Raycast(leftTopPoint, Vector2.up, 1f, groundLayer) &&
-                  !Physics2D.Raycast(rightTopPoint, Vector2.up, 1f, groundLayer);
+        // 额外的圆形检测，防止角色在tile边缘卡住
+        if (!isGrounded)
+        {
+            Vector2 circleCenter = new Vector2(center.x, center.y - height - 0.02f);
+            isGrounded = Physics2D.OverlapCircle(circleCenter, 0.05f, groundLayer);
+        }
     }
     #endregion
     
@@ -271,21 +340,10 @@ public class PlayerController : MonoSingleton<PlayerController>
         rb.AddForce(Vector2.right * rollPower * facing, ForceMode2D.Impulse);
         PlayerAnimatorManager.Instance.SwitchToDash();
         
-        // 翻滚时修改碰撞器
-        ModifyColliderForCrouch();
-        
         yield return new WaitForSeconds(rollDuration);
         
         isRolling = false;
-        
-        if (!canStand)
-        {
-            isGetDown = true;
-        }
-        else
-        {
-            ResetColliderSize();
-        }
+        ResetColliderSize();
     }
     #endregion
     
@@ -322,13 +380,6 @@ public class PlayerController : MonoSingleton<PlayerController>
         Vector3 scale = transform.localScale;
         scale.x = facing * Mathf.Abs(scale.x);
         transform.localScale = scale;
-    }
-    
-    private void ModifyColliderForCrouch()
-    {
-        boxCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / 2);
-        boxCollider.offset = new Vector2(originalColliderOffset.x, 
-            originalColliderOffset.y - (originalColliderSize.y - boxCollider.size.y) / 2);
     }
     
     private void ResetColliderSize()
@@ -415,4 +466,43 @@ public class PlayerController : MonoSingleton<PlayerController>
     public bool isGround => IsGrounded;
     public bool isRun => abilityManager?.IsAbilityActive("Movement") == true && _movementAbility.IsRunning;
     public float moveSpeed => _movementAbility.GetCurrentSpeed();
+    
+    #region Debug Visualization
+    /// <summary>
+    /// 在Scene视图中显示调试信息
+    /// </summary>
+    private void OnDrawGizmosSelected()
+    {
+        if (boxCollider == null) return;
+        
+        // 显示地面检测射线
+        Vector3 center = boxCollider.bounds.center;
+        float width = boxCollider.bounds.extents.x * 0.9f;
+        float height = boxCollider.bounds.extents.y;
+        
+        Vector3 leftPoint = center + Vector3.left * width + Vector3.down * height;
+        Vector3 rightPoint = center + Vector3.right * width + Vector3.down * height;
+        Vector3 centerPoint = center + Vector3.down * height;
+        
+        // 设置颜色
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        
+        // 绘制检测射线
+        Gizmos.DrawLine(leftPoint, leftPoint + Vector3.down * 0.05f);
+        Gizmos.DrawLine(rightPoint, rightPoint + Vector3.down * 0.05f);
+        Gizmos.DrawLine(centerPoint, centerPoint + Vector3.down * 0.05f);
+        
+        // 绘制圆形检浌范围
+        Vector3 circleCenter = new Vector3(center.x, center.y - height - 0.02f, center.z);
+        Gizmos.DrawWireSphere(circleCenter, 0.05f);
+        
+        // 显示移动状态
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.blue;
+            Vector3 velocityIndicator = transform.position + new Vector3(rb.velocity.x * 0.1f, rb.velocity.y * 0.1f, 0);
+            Gizmos.DrawLine(transform.position, velocityIndicator);
+        }
+    }
+    #endregion
 }

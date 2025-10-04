@@ -9,7 +9,6 @@ public class MovementAbility : PlayerAbility
     [Header("移动设置")]
     public float walkSpeed = 5f;
     public float runSpeed = 8f;
-    public float pushSpeed = 2f;
     
     private float currentSpeed;
     private bool isRunning;
@@ -41,11 +40,7 @@ public class MovementAbility : PlayerAbility
                    !playerController.IsRolling;
         
         // 确定移动速度
-        if (playerController.IsPushing)
-        {
-            currentSpeed = pushSpeed;
-        }
-        else if (isRunning)
+        if (isRunning)
         {
             currentSpeed = runSpeed;
         }
@@ -68,20 +63,79 @@ public class MovementAbility : PlayerAbility
             }
         }
         
-        // 应用移动
+        // 优化的移动逼辑，解决撞墙停止问题
+        Vector2 currentVelocity = playerController.GetVelocity();
+        
         if (Mathf.Abs(horizontal) > 0.1f)
         {
-            playerController.SetVelocity(horizontal * currentSpeed, playerController.GetVelocity().y);
-            // 只在移动时更新朝向，避免与主控制器冲突
-            // playerController.SetFacing(horizontal > 0 ? 1 : -1);
+            // 检测是否撞墙
+            bool isHittingWall = CheckWallCollision(horizontal);
+            
+            if (!isHittingWall || playerController.IsGrounded)
+            {
+                // 如果没有撞墙或者在地上，正常移动
+                float targetVelocityX = horizontal * currentSpeed;
+                
+                // 使用平滑过渡，提高手感
+                float velocityX = Mathf.Lerp(currentVelocity.x, targetVelocityX, Time.deltaTime * 10f);
+                playerController.SetVelocity(velocityX, currentVelocity.y);
+            }
+            else if (!playerController.IsGrounded)
+            {
+                // 在空中撞墙时，允许微弱的水平移动，但不影响垂直速度
+                float reducedSpeed = horizontal * currentSpeed * 0.3f;
+                playerController.SetVelocity(reducedSpeed, currentVelocity.y);
+            }
         }
         else
         {
-            playerController.SetVelocity(0, playerController.GetVelocity().y);
+            // 停止移动时的优化，保持垂直速度
+            float decelerationRate = playerController.IsGrounded ? 15f : 5f;
+            float velocityX = Mathf.Lerp(currentVelocity.x, 0, Time.deltaTime * decelerationRate);
+            
+            // 当速度很小时直接设为0，避免微小抖动
+            if (Mathf.Abs(velocityX) < 0.1f)
+                velocityX = 0;
+                
+            playerController.SetVelocity(velocityX, currentVelocity.y);
         }
         
         // 更新动画状态
         UpdateAnimationState(horizontal);
+    }
+    
+    /// <summary>
+    /// 检测是否与墙壁碰撞
+    /// </summary>
+    private bool CheckWallCollision(float horizontalInput)
+    {
+        if (playerController == null) return false;
+        
+        BoxCollider2D collider = playerController.GetBoxCollider();
+        if (collider == null) return false;
+        
+        float checkDistance = 0.1f;
+        Vector2 rayOrigin = collider.bounds.center;
+        Vector2 rayDirection = horizontalInput > 0 ? Vector2.right : Vector2.left;
+        
+        // 使用多条射线检测墙壁
+        LayerMask wallLayer = LayerMask.GetMask("Ground");
+        
+        bool hitWall = false;
+        for (int i = -1; i <= 1; i++)
+        {
+            Vector2 rayPos = rayOrigin + Vector2.up * (collider.bounds.extents.y * 0.5f * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayPos, rayDirection, 
+                                                 collider.bounds.extents.x + checkDistance, wallLayer);
+            
+            if (hit.collider != null && hit.collider != collider)
+            {
+                hitWall = true;
+                break;
+            }
+        }
+        
+        return hitWall;
     }
     
     private void UpdateAnimationState(float horizontal)

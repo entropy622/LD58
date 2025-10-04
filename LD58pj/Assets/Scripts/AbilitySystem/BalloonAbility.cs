@@ -53,8 +53,8 @@ public class BalloonAbility : PlayerAbility
     private void HandleGlideInput()
     {
         // 检查滑翔输入（长按空格键）
-        bool wantsToGlide = Input.GetKey(glideKey) && !playerController.IsGrounded;
-        
+        bool wantsToGlide = (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W)) 
+                            && !playerController.IsGrounded;
         if (wantsToGlide && !isGliding)
         {
             StartGlide();
