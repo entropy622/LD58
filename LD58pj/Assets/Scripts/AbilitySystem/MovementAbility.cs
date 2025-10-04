@@ -58,6 +58,16 @@ public class MovementAbility : PlayerAbility
             currentSpeed = walkSpeed;
         }
         
+        // 检查是否有缩小能力的速度增强
+        if (AbilityManager.Instance.activeAbilities.Contains("Shrink"))
+        {
+            var shrinkAbility = playerController.GetAbilityByTypeId("Shrink") as ShrinkAbility;
+            if (shrinkAbility != null)
+            {
+                currentSpeed = shrinkAbility.ModifyMovementSpeed(currentSpeed);
+            }
+        }
+        
         // 应用移动
         if (Mathf.Abs(horizontal) > 0.1f)
         {

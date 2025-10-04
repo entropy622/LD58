@@ -33,12 +33,21 @@ public class PlayerController : MonoSingleton<PlayerController>
     [SerializeField] private IronBlockAbility _ironBlockAbility = new IronBlockAbility();
     [Space(5)]
     [SerializeField] private BalloonAbility _balloonAbility = new BalloonAbility();
+    [Space(5)]
+    [SerializeField] private GravityFlipAbility _gravityFlipAbility = new GravityFlipAbility();
+    [Space(5)]
+    [SerializeField] private IceBlockAbility _iceBlockAbility = new IceBlockAbility();
+    [Space(5)]
+    [SerializeField] private ShrinkAbility _shrinkAbility = new ShrinkAbility();
     
     // 公开访问器供 Editor 使用
     public MovementAbility movementAbility => _movementAbility;
     public JumpAbility jumpAbility => _jumpAbility;
     public IronBlockAbility ironBlockAbility => _ironBlockAbility;
     public BalloonAbility balloonAbility => _balloonAbility;
+    public GravityFlipAbility gravityFlipAbility => _gravityFlipAbility;
+    public IceBlockAbility iceBlockAbility => _iceBlockAbility;
+    public ShrinkAbility shrinkAbility => _shrinkAbility;
     
     // 组件引用
     private Rigidbody2D rb;
@@ -138,12 +147,18 @@ public class PlayerController : MonoSingleton<PlayerController>
         _jumpAbility.Initialize(this);
         _ironBlockAbility.Initialize(this);
         _balloonAbility.Initialize(this);
+        _gravityFlipAbility.Initialize(this);
+        _iceBlockAbility.Initialize(this);
+        _shrinkAbility.Initialize(this);
         
         // 注册能力到字典中
         RegisterAbility(_movementAbility);
         RegisterAbility(_jumpAbility);
         RegisterAbility(_ironBlockAbility);
         RegisterAbility(_balloonAbility);
+        RegisterAbility(_gravityFlipAbility);
+        RegisterAbility(_iceBlockAbility);
+        RegisterAbility(_shrinkAbility);
     }
     
     /// <summary>

@@ -9,6 +9,9 @@ public class PlayerControllerEditor : Editor
     private SerializedProperty jumpAbilityProp;
     private SerializedProperty ironBlockAbilityProp;
     private SerializedProperty balloonAbilityProp;
+    private SerializedProperty gravityFlipAbilityProp;
+    private SerializedProperty iceBlockAbilityProp;
+    private SerializedProperty shrinkAbilityProp;
     
     void OnEnable()
     {
@@ -17,6 +20,9 @@ public class PlayerControllerEditor : Editor
         jumpAbilityProp = serializedObject.FindProperty("_jumpAbility");
         ironBlockAbilityProp = serializedObject.FindProperty("_ironBlockAbility");
         balloonAbilityProp = serializedObject.FindProperty("_balloonAbility");
+        gravityFlipAbilityProp = serializedObject.FindProperty("_gravityFlipAbility");  
+        iceBlockAbilityProp = serializedObject.FindProperty("_iceBlockAbility");
+        shrinkAbilityProp = serializedObject.FindProperty("_shrinkAbility");
     }
     
     public override void OnInspectorGUI()
@@ -32,6 +38,20 @@ public class PlayerControllerEditor : Editor
                 continue; // 跳过能力属性，由下面特殊处理
             EditorGUILayout.PropertyField(prop, true);
         }
+        
+        // 添加分隔线
+        EditorGUILayout.Space(15);
+        EditorGUILayout.LabelField("能力系统控制", EditorStyles.boldLabel);
+        EditorGUILayout.Space(10);
+        
+        // 能力开关控制
+        DrawAbilitySection("😶 移动能力", movementAbilityProp, controller.movementAbility);
+        DrawAbilitySection("🦘 跳跃能力", jumpAbilityProp, controller.jumpAbility);
+        DrawAbilitySection("🧱 铁块能力", ironBlockAbilityProp, controller.ironBlockAbility);
+        DrawAbilitySection("🎈 气球能力", balloonAbilityProp, controller.balloonAbility);
+        DrawAbilitySection("👻 翻转能力", gravityFlipAbilityProp, controller.gravityFlipAbility);
+        DrawAbilitySection("氷 冰块能力", iceBlockAbilityProp, controller.iceBlockAbility);
+        DrawAbilitySection("縮 小能力", shrinkAbilityProp, controller.shrinkAbility);
         
         // 应用修改
         serializedObject.ApplyModifiedProperties();

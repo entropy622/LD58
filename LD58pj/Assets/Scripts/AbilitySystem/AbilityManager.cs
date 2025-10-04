@@ -455,7 +455,10 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             case "Movement": return "Jump";
             case "Jump": return "IronBlock";
             case "IronBlock": return "Balloon";
-            case "Balloon": return "";
+            case "Balloon": return "GravityFlip";
+            case "GravityFlip": return "IceBlock";
+            case "IceBlock": return "Shrink";
+            case "Shrink": return "";
             default: return "Movement";
         }
     }

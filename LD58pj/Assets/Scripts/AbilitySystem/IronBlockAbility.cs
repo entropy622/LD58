@@ -8,8 +8,7 @@ public class IronBlockAbility : PlayerAbility
 {
     [Header("铁块属性")]
     public float massMultiplier = 3f;
-    public float gravityMultiplier = 2f;
-    public float jumpReduction = 0.4f; // 跳跃力减少到40%
+    public float gravityMultiplier = 1f;
     
     private float originalMass;
     private float originalGravityScale;
