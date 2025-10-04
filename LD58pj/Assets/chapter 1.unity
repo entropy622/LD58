@@ -6551,7 +6551,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxAbilitySlots: 2
-  equippedAbilities: []
+  equippedAbilities:
+  - Jump
+  - Movement
   activeAbilities: []
   abilitySlotParent: {fileID: 0}
   abilitySlotPrefab: {fileID: 0}
@@ -7147,14 +7149,6 @@ PrefabInstance:
     - target: {fileID: 1586904685604853981, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
       propertyPath: m_Name
       value: TestPlayer
-      objectReference: {fileID: 0}
-    - target: {fileID: 6912624241464969594, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: mainCamera
-      value: 
-      objectReference: {fileID: 519420031}
-    - target: {fileID: 6957091438844404882, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: canPush
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
       propertyPath: m_LocalPosition.x

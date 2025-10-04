@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3542336805755647226}
   - component: {fileID: 5622823628836031879}
   - component: {fileID: 22500611000771908}
-  - component: {fileID: 6957091438844404882}
   - component: {fileID: 337464454573008586}
   - component: {fileID: 9144552267729993808}
   - component: {fileID: 6486344990955793619}
@@ -127,42 +126,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 2
   m_SpriteSortPoint: 0
---- !u!114 &6957091438844404882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1586904685604853981}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0791d9ae276f71458a052aadaa19a72, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerSR: {fileID: 22500611000771908}
-  jumpPower: 10
-  rollPower: 5
-  walkSpeed: 4
-  runSpeed: 6
-  getDownSpeed: 2
-  moveSpeed: 1
-  pushSpeed: 2
-  facing: -1
-  canPush: 1
-  canMoveR: 0
-  canMoveL: 0
-  isGround: 1
-  isRun: 0
-  isGetDown: 0
-  isRoll: 0
-  isPush: 0
-  canStand: 1
-  RollDuration: 1
-  isCollL: 0
-  isCollR: 0
-  isColl: 0
-  tryOpen: 0
-  physicsMaterial2D: {fileID: 0}
 --- !u!50 &337464454573008586
 Rigidbody2D:
   serializedVersion: 4
@@ -254,30 +217,63 @@ MonoBehaviour:
   abilityManager: {fileID: 0}
   _movementAbility:
     abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
     walkSpeed: 5
     runSpeed: 8
     pushSpeed: 2
   _jumpAbility:
     abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
     jumpPower: 10
     coyoteTime: 0.1
     jumpBufferTime: 0.1
   _ironBlockAbility:
     abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
     massMultiplier: 3
     gravityMultiplier: 2
-    jumpReduction: 0.4
   _balloonAbility:
     abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
     glideGravityScale: 0.6
     glideFallSpeed: 2
-    normalFallSpeed: 10
     glideKey: 32
-  enableLegacyCompatibility: 1
+  _gravityFlipAbility:
+    abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    _isEnabled: 1
+    flipKey: 103
+    flipCooldown: 0.5
+  _iceBlockAbility:
+    abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    _isEnabled: 1
+    frictionReduction: 0.9
+    slideSpeedMultiplier: 2
+    jumpHorizontalBoost: 1.5
+    airControlReduction: 0.3
+    slideParticleRate: 10
+  _shrinkAbility:
+    abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    _isEnabled: 1
+    shrinkScale: 0.5
+    shrinkDuration: 0.3
+    maintainMass: 0
+    massMultiplier: 1
+    jumpPowerMultiplier: 0.6
+    speedMultiplier: 1.2
 --- !u!1 &1769518366039675302
 GameObject:
   m_ObjectHideFlags: 0
