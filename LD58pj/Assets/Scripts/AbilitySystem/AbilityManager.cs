@@ -17,6 +17,7 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     
     [Header("能力状态管理")]
     public List<string> activeAbilities = new List<string>(); // 当前激活的能力列表
+    public List<string> defaultAbilities = new List<string>();
     
     private Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
     
