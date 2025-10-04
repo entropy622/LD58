@@ -134,6 +134,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 6486344990955793619, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: abilityManager
+      value: 
+      objectReference: {fileID: 2129220552}
+    - target: {fileID: 6486344990955793619, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: _balloonAbility._isEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6486344990955793619, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: _ironBlockAbility._isEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.46
@@ -466,11 +478,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106395c63ae9f8a4aad10756d80b74c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAbilitySlots: 2
-  equippedAbilities: []
+  maxAbilitySlots: 50
+  equippedAbilities:
+  - Ballon
+  - Movement
+  activeAbilities: []
   abilitySlotParent: {fileID: 0}
   abilitySlotPrefab: {fileID: 0}
-  abilityDataList: []
 --- !u!4 &2129220553
 Transform:
   m_ObjectHideFlags: 0

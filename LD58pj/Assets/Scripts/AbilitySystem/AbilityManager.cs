@@ -17,7 +17,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     
     [Header("能力状态管理")]
     public List<string> activeAbilities = new List<string>(); // 当前激活的能力列表
-    public List<string> defaultAbilities = new List<string>();
     
     private Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
     
@@ -34,7 +33,8 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     private List<string> lastActiveAbilities = new List<string>();
     private bool hasInitializedInspectorCheck = false;
 
-    [Header("全部能力")] public List<PlayerAbility> playerAbilities = new List<PlayerAbility>();
+    [Header("全部能力")]
+    public List<PlayerAbility> playerAbilities = new List<PlayerAbility>();
         
         
     /// <summary>
@@ -81,12 +81,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     
     private void SetupDefaultAbilities()
     {
-        // 根据配置设置默认能力
-        foreach (var abilityTypeId in defaultAbilities)
-        {
-            ActivateAbility(abilityTypeId);
-        }
-        
         // 设置默认装备
         if (equippedAbilities.Count == 0 || equippedAbilities.All(a => string.IsNullOrEmpty(a)))
         {
