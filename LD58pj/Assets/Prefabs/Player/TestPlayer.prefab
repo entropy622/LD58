@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6957091438844404882}
   - component: {fileID: 337464454573008586}
   - component: {fileID: 9144552267729993808}
+  - component: {fileID: 6486344990955793619}
   m_Layer: 0
   m_Name: TestPlayer
   m_TagString: Player
@@ -133,7 +134,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1586904685604853981}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0791d9ae276f71458a052aadaa19a72, type: 3}
   m_Name: 
@@ -161,6 +162,7 @@ MonoBehaviour:
   isCollR: 0
   isColl: 0
   tryOpen: 0
+  physicsMaterial2D: {fileID: 0}
 --- !u!50 &337464454573008586
 Rigidbody2D:
   serializedVersion: 4
@@ -233,6 +235,49 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 5.9214077, y: 14.356556}
   m_EdgeRadius: 0
+--- !u!114 &6486344990955793619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586904685604853981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1dd5a5bcbc5c4947ac21326fc917129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerSR: {fileID: 0}
+  crouchSpeed: 1
+  rollPower: 1
+  rollDuration: 0.5
+  _movementAbility:
+    abilityName: 
+    _isEnabled: 0
+    walkSpeed: 5
+    runSpeed: 8
+    pushSpeed: 2
+  _jumpAbility:
+    abilityName: 
+    _isEnabled: 1
+    jumpPower: 10
+    coyoteTime: 0.1
+    jumpBufferTime: 0.1
+  _ironBlockAbility:
+    abilityName: 
+    _isEnabled: 1
+    massMultiplier: 3
+    gravityMultiplier: 2
+    jumpReduction: 0.4
+  _balloonAbility:
+    abilityName: 
+    _isEnabled: 1
+    massReduction: 0.3
+    gravityReduction: 0.2
+    floatForce: 2
+    slowFallMultiplier: 0.3
+    floatKey: 32
+  enableLegacyCompatibility: 1
 --- !u!1 &1769518366039675302
 GameObject:
   m_ObjectHideFlags: 0
