@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using GameAudio;
+using QFramework;
 
 /// <summary>
 /// 能力管理器 - 管理玩家的能力装备和切换
 /// </summary>
-public class AbilityManager : MonoBehaviour
+public class AbilityManager : MonoSingleton<AbilityManager>
 {
     [Header("能力槽设置")]
     public int maxAbilitySlots = 2;
