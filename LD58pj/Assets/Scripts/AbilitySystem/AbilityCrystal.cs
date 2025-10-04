@@ -14,6 +14,10 @@ public class AbilityCrystal : MonoBehaviour
     {
         abilityManager = AbilityManager.Instance;
         ability = abilityManager.playerAbilities.Find(x => x.AbilityTypeId == abilityTypeId);
+        if (ability == null)
+        {
+            Debug.Log("No ability found with type id: " + abilityTypeId);
+        }
     }
 
     // Update is called once per frame

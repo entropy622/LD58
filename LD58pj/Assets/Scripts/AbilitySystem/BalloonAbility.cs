@@ -8,9 +8,8 @@ using UnityEngine;
 public class BalloonAbility : PlayerAbility
 {
     [Header("滑翔属性")]
-    public float glideGravityScale = 0.6f; // 滑翔时的重力倍数
-    public float glideFallSpeed = 2f; // 滑翔时的最大下降速度
-    public float normalFallSpeed = 10f; // 正常下降的最大速度
+    public float glideGravityScale = 0.3f; // 滑翔时的重力倍数
+    public float glideFallSpeed = 1f; // 滑翔时的最大下降速度
     
     [Header("控制设置")]
     public KeyCode glideKey = KeyCode.Space; // 滑翔键

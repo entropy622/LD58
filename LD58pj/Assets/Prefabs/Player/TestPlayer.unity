@@ -312,6 +312,79 @@ CapsuleCollider2D:
   m_Offset: {x: -0.0053214873, y: 0.011259065}
   m_Size: {x: 1.009501, y: 1.0749856}
   m_Direction: 1
+--- !u!1001 &1645584574
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4151996409679287941, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_Size.x
+      value: 1.0115134
+      objectReference: {fileID: 0}
+    - target: {fileID: 4151996409679287941, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_Size.y
+      value: 2.0561175
+      objectReference: {fileID: 0}
+    - target: {fileID: 4151996409679287941, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.53086203
+      objectReference: {fileID: 0}
+    - target: {fileID: 4151996409679287941, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.5820763
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.402302
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.22588545
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.086395
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4232587652802018900, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_Name
+      value: AbilityCrystal
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
 --- !u!1 &1875346356
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,8 +553,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxAbilitySlots: 50
   equippedAbilities:
-  - Ballon
+  - Balloon
   - Movement
+  - Jump
   activeAbilities: []
   abilitySlotParent: {fileID: 0}
   abilitySlotPrefab: {fileID: 0}
@@ -508,3 +582,4 @@ SceneRoots:
   - {fileID: 906913290}
   - {fileID: 604260218}
   - {fileID: 2129220553}
+  - {fileID: 1645584574}
