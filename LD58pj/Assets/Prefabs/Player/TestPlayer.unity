@@ -27972,14 +27972,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AbilityCrystal
       objectReference: {fileID: 0}
-    - target: {fileID: 8696204000686985035, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.52
-      objectReference: {fileID: 0}
-    - target: {fileID: 8696204000686985035, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.59
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -28452,11 +28444,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106395c63ae9f8a4aad10756d80b74c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTimeLimit: 60
-  timerText: {fileID: 0}
-  normalTimeColor: {r: 1, g: 1, b: 1, a: 1}
-  warningTimeColor: {r: 1, g: 0, b: 0, a: 1}
-  warningThreshold: 10
   maxAbilitySlots: 10
   equippedAbilities:
   - Movement
