@@ -175,18 +175,7 @@ public class Enemy : MonoBehaviour
         // 播放死亡特效预制体
         if (deathEffect != null)
         {
-            GameObject effect = Instantiate(deathEffect, transform.position, transform.rotation);
-            
-            // 自动销毁特效（如果没有自己的销毁逻辑）
-            var particleSystem = effect.GetComponent<ParticleSystem>();
-            if (particleSystem != null)
-            {
-                Destroy(effect, particleSystem.main.duration + particleSystem.main.startLifetime.constantMax);
-            }
-            else
-            {
-                Destroy(effect, 5f); // 默认2秒后销毁
-            }
+            Instantiate(deathEffect, transform.position, transform.rotation);
         }
         
         // 播放死亡音效
