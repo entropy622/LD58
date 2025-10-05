@@ -15,6 +15,9 @@ public class UIManeger : MonoBehaviour
 
     public Transform ui2Parent; // 用于激活的能力UI
 
+    private List<string> lastEquippedAbilities = new List<string>();
+    private List<string> lastActiveAbilities = new List<string>();
+
     // 合成后的注册表
     public Dictionary<string, GameObject> abilityPrefabRegistry = new Dictionary<string, GameObject>();
 
@@ -45,14 +48,28 @@ public class UIManeger : MonoBehaviour
 
     void Start()
     {
-        // ...existing code...
-        
+        lastActiveAbilities = GetActiveAbilities();
+        lastEquippedAbilities = GetEquippedAbilities();
+        ShowActiveAbilities();
+        ShowEquippedAbilities();
+
     }
 
     void Update()
     {
-        // ...existing code...
+        if (activeablitieschanged())
+        {
+            ShowActiveAbilities();
+
+        }
+        if (equippedablitieschanged())
+        {
+            ShowEquippedAbilities();
+
+        }
     }
+
+
 
     public void ShowEquippedAbilities()
     {
@@ -89,7 +106,7 @@ public class UIManeger : MonoBehaviour
     {
         List<string> activeAbilities = GetActiveAbilities();
         //根据activeAbilities内容，通过abilityPrefabRegistry生成UI
-         // 请在Inspector中绑定或查找你的UI父节点
+        // 请在Inspector中绑定或查找你的UI父节点
         if (ui2Parent == null)
         {
             Debug.LogWarning("UI父节点未设置，无法生成能力UI");
@@ -118,7 +135,7 @@ public class UIManeger : MonoBehaviour
     }
 
 
-//本maneger输入和输出只有总计四个输入输出函数
+    //本maneger只有总计六个输入输出函数
     private List<string> GetEquippedAbilities()
     {
         return AbilityManager.Instance.equippedAbilities;
@@ -128,6 +145,45 @@ public class UIManeger : MonoBehaviour
     {
         return AbilityManager.Instance.activeAbilities;
     }
+
+    private bool equippedablitieschanged()
+    {
+        List<string> currentEquippedAbilities = GetEquippedAbilities();
+        if (currentEquippedAbilities.Count != lastEquippedAbilities.Count)
+        {
+            lastEquippedAbilities = new List<string>(currentEquippedAbilities);
+            return true;
+        }
+        for (int i = 0; i < currentEquippedAbilities.Count; i++)
+        {
+            if (currentEquippedAbilities[i] != lastEquippedAbilities[i])
+            {
+                lastEquippedAbilities = new List<string>(currentEquippedAbilities);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private bool activeablitieschanged()
+    {
+        List<string> currentActiveAbilities = GetActiveAbilities();
+        if (currentActiveAbilities.Count != lastActiveAbilities.Count)
+        {
+            lastActiveAbilities = new List<string>(currentActiveAbilities);
+            return true;
+        }
+        for (int i = 0; i < currentActiveAbilities.Count; i++)
+        {
+            if (currentActiveAbilities[i] != lastActiveAbilities[i])
+            {
+                lastActiveAbilities = new List<string>(currentActiveAbilities);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
  //public List<string> equippedAbilities = new List<string>(); // 装备的能力列表
 
