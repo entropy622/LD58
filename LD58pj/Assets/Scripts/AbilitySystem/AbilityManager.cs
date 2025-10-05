@@ -28,7 +28,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     private bool hasInitializedInspectorCheck = false;
 
     [Header("全部能力")]
-    public List<PlayerAbility> playerAbilities = new List<PlayerAbility>();
     private readonly Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
     
     void Start()
@@ -39,16 +38,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     
     private void SetupDefaultAbilitiesCoroutine()
     {
-        // 如果没有注册PlayerController，尝试查找
-        if (registeredPlayerController == null)
-        {
-            registeredPlayerController = PlayerController.Instance;
-            if (registeredPlayerController != null && !hasRegisteredPlayerController)
-            {
-                // 如果找到了PlayerController但还没注册，手动注册
-                RegisterPlayerController(registeredPlayerController);
-            }
-        }
         // 设置默认能力状态
         SetupDefaultAbilities();
     }
@@ -67,8 +56,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             EquipAbility("Movement");
             EquipAbility("Jump");
         }
-        
-        // 确保装备的能力都是激活的
         SyncEquippedToActive();
     }
     /// <summary>
@@ -307,17 +294,20 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         if (registeredPlayerController != null)
         {
             var playerAbilities = registeredPlayerController.GetAllAbilities();
-            _abilityRegistry.Clear();
-            foreach (var kvp in playerAbilities)
-            {
-                _abilityRegistry[kvp.Key] = kvp.Value;
-            }
             
+            // 只在注册表为空或者能力数量发生变化时才清空重新构建
+            if (_abilityRegistry.Count == 0 || _abilityRegistry.Count != playerAbilities.Count)
+            {
+                _abilityRegistry.Clear();
+                foreach (var kvp in playerAbilities)
+                {
+                    _abilityRegistry[kvp.Key] = kvp.Value;
+                }
+                Debug.Log($"[AbilityManager] 更新能力注册表，当前能力: {string.Join(", ", _abilityRegistry.Keys)}");
+            }
             // 验证并清理无效的能力ID
             ValidateAndCleanAbilityIds();
         }
-        
-        Debug.Log($"[AbilityManager] PlayerController已注册，可用能力: {string.Join(", ", _abilityRegistry.Keys)}");
     }
     
     /// <summary>
