@@ -6,61 +6,19 @@ using System.Linq;
 using QFramework;
 
 /// <summary>
-/// 能力图标配置类
-/// </summary>
-[System.Serializable]
-public class AbilityIconConfig
-{
-    [Header("基本信息")]
-    public string abilityTypeId;
-    public string displayName;
-    
-    [Header("视觉设置")]
-    public Sprite icon;
-    public Color color = Color.white;
-    
-    public AbilityIconConfig()
-    {
-        abilityTypeId = "";
-        displayName = "";
-        icon = null;
-        color = Color.white;
-    }
-    
-    public AbilityIconConfig(string typeId, string name, Sprite iconSprite, Color iconColor)
-    {
-        abilityTypeId = typeId;
-        displayName = name;
-        icon = iconSprite;
-        color = iconColor;
-    }
-}
-
-/// <summary>
 /// 能力管理器 - 统一管理所有能力状态的中心
 /// 所有能力相关的状态都在这里管理
 /// </summary>
 public class AbilityManager : MonoSingleton<AbilityManager>
 {
-   
-
     [Header("能力槽设置")]
-    public int maxAbilitySlots = 2;
     public List<string> equippedAbilities = new List<string>(); // 装备的能力列表
     
     [Header("能力状态管理")]
     public List<string> activeAbilities = new List<string>(); // 当前激活的能力列表
     
-    private Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
-    
-    [Header("UI引用")]
-    public Transform abilitySlotParent;
-    public GameObject abilitySlotPrefab;
-    
     // 玩家控制器引用
     private PlayerController registeredPlayerController;
-    private List<Image> abilitySlotImages = new List<Image>();
-    
     // 防止重复注册的标志位
     private bool hasRegisteredPlayerController = false;
     
@@ -71,25 +29,10 @@ public class AbilityManager : MonoSingleton<AbilityManager>
 
     [Header("全部能力")]
     public List<PlayerAbility> playerAbilities = new List<PlayerAbility>();
-    
-    [Header("图标配置")]
-    public List<AbilityIconConfig> abilityIconConfigs = new List<AbilityIconConfig>();
-        
-        
-    /// <summary>
-    /// 注册能力到管理字典
-    /// </summary>
-    // private void RegisterAbility(PlayerAbility ability)
-    // {
-    //     if (ability != null && !string.IsNullOrEmpty(ability.AbilityTypeId))
-    //     {
-    //         _abilityRegistry[ability.AbilityTypeId] = ability;
-    //     }
-    // }
+    private readonly Dictionary<string, PlayerAbility> _abilityRegistry = new Dictionary<string, PlayerAbility>();
     
     void Start()
     {
-        InitializeAbilitySlots();
         SetupDefaultAbilitiesCoroutine();
         Debug.Log("abilities count: " + _abilityRegistry.Count);
     }
@@ -106,73 +49,37 @@ public class AbilityManager : MonoSingleton<AbilityManager>
                 RegisterPlayerController(registeredPlayerController);
             }
         }
-        
         // 设置默认能力状态
         SetupDefaultAbilities();
     }
 
-    
-
-
     void Update()
     {
-        HandleDebugInput();
-        
         // 检查Inspector面板变化并同步
         CheckAndSyncInspectorChanges();
     }
-
-
-
-
+    
     private void SetupDefaultAbilities()
     {
         // 设置默认装备
         if (equippedAbilities.Count == 0 || equippedAbilities.All(a => string.IsNullOrEmpty(a)))
         {
-            EquipAbility("Movement", 0);
-            EquipAbility("Jump", 1);
+            EquipAbility("Movement");
+            EquipAbility("Jump");
         }
         
         // 确保装备的能力都是激活的
         SyncEquippedToActive();
     }
-    
-    private void InitializeAbilitySlots()
-    {
-        if (abilitySlotParent == null) return;
-        
-        // 清空现有槽位
-        foreach (Transform child in abilitySlotParent)
-        {
-            Destroy(child.gameObject);
-        }
-        abilitySlotImages.Clear();
-        
-        // 创建新的能力槽
-        for (int i = 0; i < maxAbilitySlots; i++)
-        {
-            GameObject slot = Instantiate(abilitySlotPrefab, abilitySlotParent);
-            Image slotImage = slot.GetComponent<Image>();
-            abilitySlotImages.Add(slotImage);
-            
-            // 确保装备列表有足够的位置
-            if (equippedAbilities.Count <= i)
-            {
-                equippedAbilities.Add(""); // 空字符串表示无能力
-            }
-        }
-        
-        UpdateUI();
-    }
-    
     /// <summary>
     /// 装备能力到指定槽位
     /// </summary>
-    public bool EquipAbility(string abilityTypeId, int slotIndex)
+    public bool EquipAbility(string abilityTypeId)
     {
-        if (slotIndex < 0 || slotIndex >= maxAbilitySlots) return false;
-        
+        if (equippedAbilities.Exists(ability => ability == abilityTypeId))
+        {
+            return false;
+        }
         // 验证能力ID有效性（空字符串表示卸载，允许通过）
         if (!string.IsNullOrEmpty(abilityTypeId) && !IsValidAbilityId(abilityTypeId))
         {
@@ -180,48 +87,29 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             return false;
         }
         
-        // 取消装备旧能力
-        if (!string.IsNullOrEmpty(equippedAbilities[slotIndex]))
-        {
-            UnequipAbility(slotIndex);
-        }
-        
         // 装备新能力
-        equippedAbilities[slotIndex] = abilityTypeId;
+        equippedAbilities.Add(abilityTypeId);
         
         // 激活装备的能力
         if (!string.IsNullOrEmpty(abilityTypeId))
         {
             ActivateAbility(abilityTypeId);
         }
-        
-        UpdateUI();
-        Debug.Log($"[AbilityManager] 装备能力 {abilityTypeId} 到槽位 {slotIndex}");
+        Debug.Log($"[AbilityManager] 装备能力 {abilityTypeId}");
         return true;
     }
     
     /// <summary>
     /// 从指定槽位卸载能力
     /// </summary>
-    public void UnequipAbility(int slotIndex)
+    public void UnequipAbility(string abilityTypeId)
     {
-        if (slotIndex < 0 || slotIndex >= maxAbilitySlots) return;
-        
-        string abilityTypeId = equippedAbilities[slotIndex];
+        var slotIndex = equippedAbilities.FindIndex(ability => ability == abilityTypeId);
         if (!string.IsNullOrEmpty(abilityTypeId))
         {
-            equippedAbilities[slotIndex] = "";
-            
-            // 如果能力没有在其他槽位装备，则去激活
-            if (!IsAbilityEquipped(abilityTypeId))
-            {
-                DeactivateAbility(abilityTypeId);
-            }
-            
+            equippedAbilities.RemoveAt(slotIndex);
             Debug.Log($"[AbilityManager] 卸载能力 {abilityTypeId} 从槽位 {slotIndex}");
         }
-        
-        UpdateUI();
     }
     
     /// <summary>
@@ -274,21 +162,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     }
     
     /// <summary>
-    /// 切换能力激活状态
-    /// </summary>
-    public void ToggleAbility(string abilityTypeId)
-    {
-        if (IsAbilityActive(abilityTypeId))
-        {
-            DeactivateAbility(abilityTypeId);
-        }
-        else
-        {
-            ActivateAbility(abilityTypeId);
-        }
-    }
-    
-    /// <summary>
     /// 检查能力是否激活
     /// </summary>
     public bool IsAbilityActive(string abilityTypeId)
@@ -318,24 +191,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     public List<string> GetEquippedAbilities()
     {
         return new List<string>(equippedAbilities);
-    }
-    
-    /// <summary>
-    /// 获取指定槽位的能力
-    /// </summary>
-    public string GetAbilityInSlot(int slotIndex)
-    {
-        if (slotIndex >= 0 && slotIndex < equippedAbilities.Count)
-            return equippedAbilities[slotIndex];
-        return "";
-    }
-    
-    /// <summary>
-    /// 获取能力的槽位索引
-    /// </summary>
-    public int GetAbilitySlotIndex(string abilityTypeId)
-    {
-        return equippedAbilities.IndexOf(abilityTypeId);
     }
     
     /// <summary>
@@ -385,8 +240,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             {
                 SyncAbilityCallbacks();
             }
-            
-            UpdateUI();
         }
     }
     
@@ -436,85 +289,12 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         }
     }
     
-    private void UpdateUI()
-    {
-        for (int i = 0; i < abilitySlotImages.Count && i < equippedAbilities.Count; i++)
-        {
-            string abilityTypeId = equippedAbilities[i];
-            
-            if (!string.IsNullOrEmpty(abilityTypeId))
-            {
-                // 优先使用图标配置系统
-                var iconConfig = GetAbilityIconConfig(abilityTypeId);
-                if (iconConfig != null && iconConfig.icon != null)
-                {
-                    abilitySlotImages[i].sprite = iconConfig.icon;
-                    abilitySlotImages[i].color = IsAbilityActive(abilityTypeId) ? iconConfig.color : Color.gray;
-                }
-                else
-                {
-                    // 备用方案：从 PlayerAbility 获取
-                    PlayerAbility data = GetAbilityData(abilityTypeId);
-                    if (data != null && data.icon != null)
-                    {
-                        abilitySlotImages[i].sprite = data.icon;
-                        abilitySlotImages[i].color = IsAbilityActive(abilityTypeId) ? data.color : Color.gray;
-                    }
-                    else
-                    {
-                        abilitySlotImages[i].sprite = null;
-                        abilitySlotImages[i].color = Color.gray;
-                    }
-                }
-            }
-            else
-            {
-                abilitySlotImages[i].sprite = null;
-                abilitySlotImages[i].color = Color.gray;
-            }
-        }
-    }
-    
     private PlayerAbility GetAbilityData(string abilityTypeId)
     {
         return playerAbilities.Find(data => data.AbilityTypeId == abilityTypeId);
     }
     
     // 调试用的快捷键
-    private void HandleDebugInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            ToggleAbilityInSlot(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            ToggleAbilityInSlot(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            CycleAbilityInSlot(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.R))
-        {
-            CycleAbilityInSlot(1);
-        }
-    }
-    
-    private void ToggleAbilityInSlot(int slotIndex)
-    {
-        if (slotIndex >= equippedAbilities.Count) return;
-        
-        string currentAbility = equippedAbilities[slotIndex];
-        if (!string.IsNullOrEmpty(currentAbility))
-        {
-            UnequipAbility(slotIndex);
-        }
-        else
-        {
-            EquipAbility("Movement", slotIndex); // 默认装备移动
-        }
-    }
     
     private void CycleAbilityInSlot(int slotIndex)
     {
@@ -523,7 +303,7 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         string currentAbility = equippedAbilities[slotIndex];
         string nextAbility = GetNextAbilityTypeId(currentAbility);
         
-        EquipAbility(nextAbility, slotIndex);
+        EquipAbility(nextAbility);
     }
     
     private string GetNextAbilityTypeId(string current)
@@ -540,36 +320,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             case "Shrink": return "";
             default: return "Movement";
         }
-    }
-    
-    // 外部API
-    public void PickupAbility(string abilityTypeId)
-    {
-        // 尝试在空槽位中装备能力
-        for (int i = 0; i < maxAbilitySlots; i++)
-        {
-            if (string.IsNullOrEmpty(equippedAbilities[i]))
-            {
-                EquipAbility(abilityTypeId, i);
-                return;
-            }
-        }
-        
-        // 如果没有空槽位，替换第一个槽位
-        EquipAbility(abilityTypeId, 0);
-    }
-    
-    public void SwapAbilities(int slotA, int slotB)
-    {
-        if (slotA < 0 || slotA >= maxAbilitySlots || 
-            slotB < 0 || slotB >= maxAbilitySlots) return;
-        
-        string abilityA = equippedAbilities[slotA];
-        string abilityB = equippedAbilities[slotB];
-        
-        equippedAbilities[slotA] = abilityB;
-        equippedAbilities[slotB] = abilityA;
-        UpdateUI();
     }
     
     /// <summary>
@@ -598,9 +348,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             
             // 验证并清理无效的能力ID
             ValidateAndCleanAbilityIds();
-            
-            // 自动同步图标配置
-            SyncAbilityIconConfigurations();
         }
         
         Debug.Log($"[AbilityManager] PlayerController已注册，可用能力: {string.Join(", ", _abilityRegistry.Keys)}");
@@ -612,7 +359,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     public void SyncAbilityStates()
     {
         SyncAbilityCallbacks();
-        UpdateUI();
         Debug.Log("[AbilityManager] 强制同步完成");
     }
     
@@ -694,88 +440,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             return false;
         }
         
-        return EquipAbility(abilityTypeId, slotIndex);
-    }
-    
-    // ==================== 图标配置系统 ====================
-    
-    /// <summary>
-    /// 获取指定能力的图标配置
-    /// </summary>
-    public AbilityIconConfig GetAbilityIconConfig(string abilityTypeId)
-    {
-        if (string.IsNullOrEmpty(abilityTypeId)) return null;
-        
-        // 优先从配置列表中查找
-        var config = abilityIconConfigs.Find(c => c.abilityTypeId == abilityTypeId);
-        if (config != null)
-        {
-            return config;
-        }
-        
-        // 如果配置中没有，尝试从player能力中获取
-        var playerAbility = playerAbilities.Find(a => a.AbilityTypeId == abilityTypeId);
-        if (playerAbility != null && playerAbility.icon != null)
-        {
-            return new AbilityIconConfig(abilityTypeId, playerAbility.abilityName, playerAbility.icon, playerAbility.color);
-        }
-        
-        return null;
-    }
-    
-    /// <summary>
-    /// 设置指定能力的图标配置
-    /// </summary>
-    public void SetAbilityIconConfig(string abilityTypeId, Sprite icon, Color color, string displayName = "")
-    {
-        if (string.IsNullOrEmpty(abilityTypeId)) return;
-        
-        var existingConfig = abilityIconConfigs.Find(c => c.abilityTypeId == abilityTypeId);
-        if (existingConfig != null)
-        {
-            existingConfig.icon = icon;
-            existingConfig.color = color;
-            if (!string.IsNullOrEmpty(displayName))
-                existingConfig.displayName = displayName;
-        }
-        else
-        {
-            var newConfig = new AbilityIconConfig(abilityTypeId, displayName, icon, color);
-            abilityIconConfigs.Add(newConfig);
-        }
-    }
-    
-    /// <summary>
-    /// 同步能力图标配置（从 playerAbilities 同步到 abilityIconConfigs）
-    /// </summary>
-    public void SyncAbilityIconConfigurations()
-    {
-        foreach (var playerAbility in playerAbilities)
-        {
-            if (playerAbility == null || string.IsNullOrEmpty(playerAbility.AbilityTypeId)) continue;
-            
-            var existingConfig = abilityIconConfigs.Find(c => c.abilityTypeId == playerAbility.AbilityTypeId);
-            if (existingConfig == null)
-            {
-                // 创建新配置
-                var newConfig = new AbilityIconConfig(
-                    playerAbility.AbilityTypeId,
-                    playerAbility.abilityName,
-                    playerAbility.icon,
-                    playerAbility.color
-                );
-                abilityIconConfigs.Add(newConfig);
-            }
-            else if (existingConfig.icon == null && playerAbility.icon != null)
-            {
-                // 更新空配置
-                existingConfig.icon = playerAbility.icon;
-                existingConfig.color = playerAbility.color;
-                if (string.IsNullOrEmpty(existingConfig.displayName))
-                    existingConfig.displayName = playerAbility.abilityName;
-            }
-        }
-        
-        Debug.Log($"[AbilityManager] 已同步 {abilityIconConfigs.Count} 个能力图标配置");
+        return EquipAbility(abilityTypeId);
     }
 }

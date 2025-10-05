@@ -10,11 +10,15 @@ public class UIManeger : MonoBehaviour
     [Header("能力注册表的value")]
         public List<GameObject> abilityPrefabValues = new List<GameObject>();
 
+
+
     //这里已经改为非预制体了，请把所有abilityPrefabValues都设置为场景中的物体
     //然后在ShowActiveAbilities中通过SetActive来控制显示和隐藏
 
     private List<string> lastEquippedAbilities = new List<string>();
     private List<string> lastActiveAbilities = new List<string>();
+
+    private Dictionary<GameObject, Vector2> abilityPositions = new Dictionary<GameObject, Vector2>();
 
     // 合成后的注册表
     public Dictionary<string, GameObject> abilityPrefabRegistry = new Dictionary<string, GameObject>();
@@ -42,6 +46,8 @@ public class UIManeger : MonoBehaviour
                 abilityPrefabRegistry[abilityPrefabkeyKeys[i]] = abilityPrefabValues[i];
             }
         }
+
+        InitializePositions();
     }
 
     void Start()
@@ -66,6 +72,32 @@ public class UIManeger : MonoBehaviour
 
         }
     }
+
+    private void InitializePositions()
+    {
+        // 存储每个 abilityPrefabValues 场景物体的初始位置
+        foreach (GameObject obj in abilityPrefabValues)
+        {
+            if (obj != null && !abilityPositions.ContainsKey(obj))
+            {
+                abilityPositions[obj] = obj.transform.position;
+            }
+        }
+    }
+
+    private void ResetPositions()
+    {
+        // 重置每个 abilityPrefabValues 场景物体的位置
+        foreach (var kvp in abilityPositions)
+        {
+            if (kvp.Key != null)
+            {
+                kvp.Key.transform.position = kvp.Value;
+            }
+        }
+    }
+
+
 
 
 
