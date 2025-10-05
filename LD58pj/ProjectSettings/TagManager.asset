@@ -12,6 +12,7 @@ TagManager:
   - Box
   - PushWall
   - DestructibleTile
+  - Enemy
   layers:
   - Default
   - TransparentFX
