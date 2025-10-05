@@ -11,6 +11,22 @@ using QFramework;
 /// </summary>
 public class AbilityManager : MonoSingleton<AbilityManager>
 {
+    // ==================== 新增：倒计时功能 ====================
+    [Header("倒计时设置")]
+    public float gameTimeLimit = 60f; // 游戏总时间（秒）
+    public Text timerText; // 计时器UI文本引用
+    public Color normalTimeColor = Color.white;
+    public Color warningTimeColor = Color.red;
+    public float warningThreshold = 10f; // 警告阈值（最后10秒）
+
+    private float currentTime;
+    private bool isTimerRunning = true;
+
+    // 倒计时事件
+    public System.Action OnTimeUp; // 时间结束事件
+    public System.Action<float> OnTimeChanged; // 时间变化事件
+    // ========================================================
+
     [Header("能力槽设置")]
     public int maxAbilitySlots = 2;
     public List<string> equippedAbilities = new List<string>(); // 装备的能力列表
@@ -55,6 +71,7 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     {
         InitializeAbilitySlots();
         SetupDefaultAbilitiesCoroutine();
+        InitializeTimer(); // ← 插入这一行
         Debug.Log("abilities count: " + _abilityRegistry.Count);
     }
     
@@ -74,15 +91,150 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         // 设置默认能力状态
         SetupDefaultAbilities();
     }
-    
+
+    // ==================== 新增：计时器初始化 ====================
+    private void InitializeTimer()
+    {
+        currentTime = gameTimeLimit;
+        UpdateTimerDisplay();
+
+        // 如果没有设置timerText，尝试自动查找
+        if (timerText == null)
+        {
+            timerText = FindObjectOfType<Text>();
+            if (timerText != null)
+            {
+                Debug.Log("[AbilityManager] 自动找到TimerText: " + timerText.name);
+            }
+            else
+            {
+                Debug.LogWarning("[AbilityManager] 未找到TimerText引用，请在Inspector中手动设置");
+            }
+        }
+    }
+    // ========================================================
+
+
     void Update()
     {
         HandleDebugInput();
         
         // 检查Inspector面板变化并同步
         CheckAndSyncInspectorChanges();
+
+        // ==================== 新增：计时器更新 ====================
+        UpdateTimer(); // ← 插入这一行
+        // ========================================================
     }
-    
+
+    // ==================== 新增：计时器核心逻辑 ====================
+    private void UpdateTimer()
+    {
+        if (!isTimerRunning) return;
+
+        currentTime -= Time.deltaTime;
+        UpdateTimerDisplay();
+
+        // 触发时间变化事件
+        OnTimeChanged?.Invoke(currentTime);
+
+        // 检查时间是否结束
+        if (currentTime <= 0f)
+        {
+            currentTime = 0f;
+            TimerEnd();
+        }
+    }
+
+    private void UpdateTimerDisplay()
+    {
+        if (timerText != null)
+        {
+            timerText.text = FormatTime(currentTime);
+
+            // 时间警告效果
+            if (currentTime <= warningThreshold)
+            {
+                timerText.color = warningTimeColor;
+                // 可以在这里添加闪烁效果
+            }
+            else
+            {
+                timerText.color = normalTimeColor;
+            }
+        }
+    }
+
+    private string FormatTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    private void TimerEnd()
+    {
+        isTimerRunning = false;
+        Debug.Log("时间到！游戏结束");
+
+        // 触发时间结束事件
+        OnTimeUp?.Invoke();
+    }
+
+    // ==================== 新增：计时器公共API ====================
+    /// <summary>
+    /// 暂停计时器
+    /// </summary>
+    public void PauseTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    /// <summary>
+    /// 恢复计时器
+    /// </summary>
+    public void ResumeTimer()
+    {
+        isTimerRunning = true;
+    }
+
+    /// <summary>
+    /// 重置计时器
+    /// </summary>
+    public void ResetTimer()
+    {
+        currentTime = gameTimeLimit;
+        isTimerRunning = true;
+        UpdateTimerDisplay();
+    }
+
+    /// <summary>
+    /// 添加额外时间
+    /// </summary>
+    public void AddTime(float extraTime)
+    {
+        currentTime += extraTime;
+        UpdateTimerDisplay();
+    }
+
+    /// <summary>
+    /// 获取剩余时间
+    /// </summary>
+    public float GetRemainingTime()
+    {
+        return currentTime;
+    }
+
+    /// <summary>
+    /// 检查时间是否已到
+    /// </summary>
+    public bool IsTimeUp()
+    {
+        return currentTime <= 0f;
+    }
+    // ========================================================
+
+
     private void SetupDefaultAbilities()
     {
         // 设置默认装备
