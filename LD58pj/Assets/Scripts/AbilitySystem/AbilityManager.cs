@@ -44,13 +44,13 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     /// <summary>
     /// 注册能力到管理字典
     /// </summary>
-    private void RegisterAbility(PlayerAbility ability)
-    {
-        if (ability != null && !string.IsNullOrEmpty(ability.AbilityTypeId))
-        {
-            _abilityRegistry[ability.AbilityTypeId] = ability;
-        }
-    }
+    // private void RegisterAbility(PlayerAbility ability)
+    // {
+    //     if (ability != null && !string.IsNullOrEmpty(ability.AbilityTypeId))
+    //     {
+    //         _abilityRegistry[ability.AbilityTypeId] = ability;
+    //     }
+    // }
     
     void Start()
     {

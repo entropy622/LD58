@@ -440,6 +440,28 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         return abilityManager;
     }
+    
+    /// <summary>
+    /// 强制重新初始化所有能力（供Editor使用）
+    /// </summary>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public void RefreshAllAbilities()
+    {
+        if (!Application.isPlaying) return;
+        
+        // 重新初始化所有能力
+        InitializeAbilities();
+        
+        // 同步到AbilityManager
+        if (abilityManager != null)
+        {
+            // 重新注册到AbilityManager
+            abilityManager.RegisterPlayerController(this);
+            abilityManager.SyncAbilityStates();
+        }
+        
+        Debug.Log("[PlayerController] 已强制刷新所有能力参数");
+    }
     #endregion
     
     private void ResetToInitialState()
