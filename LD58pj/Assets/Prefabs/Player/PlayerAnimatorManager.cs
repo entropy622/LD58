@@ -9,6 +9,14 @@ using UnityEngine;
 
 public class PlayerAnimatorManager : MonoSingleton<PlayerAnimatorManager>
 {
+    private static readonly int VelocityY = Animator.StringToHash("VelocityY");
+    private static readonly int Pick = Animator.StringToHash("Pick");
+    private static readonly int SpeedModeInt = Animator.StringToHash("SpeedModeInt");
+    private static readonly int Crouch = Animator.StringToHash("Crouch");
+    private static readonly int Lift = Animator.StringToHash("Lift");
+    private static readonly int Push = Animator.StringToHash("Push");
+    private static readonly int Jump = Animator.StringToHash("Jump");
+
     [Header("可自动获取")]
     public Animator playerAnimator;
     /*public float moveSpeed;
@@ -39,15 +47,15 @@ public class PlayerAnimatorManager : MonoSingleton<PlayerAnimatorManager>
     }
     public void SwitchToIdle()
     {
-        playerAnimator.SetInteger("SpeedModeInt",0);
+        playerAnimator.SetInteger(SpeedModeInt,0);
     }
     public void SwitchToWalk()
     {
-        playerAnimator.SetInteger("SpeedModeInt",1);
+        playerAnimator.SetInteger(SpeedModeInt,1);
     }
     public void SwitchToRun()
     {
-        playerAnimator.SetInteger("SpeedModeInt",2);
+        playerAnimator.SetInteger(SpeedModeInt,2);
     }
     public void SwitchToDash() //由于是一次性的动作，所以不需要切换状态
     {
@@ -60,22 +68,27 @@ public class PlayerAnimatorManager : MonoSingleton<PlayerAnimatorManager>
     }
     public void ChangeCrouchState(bool state)
     {
-        playerAnimator.SetBool("Crouch",state);
+        playerAnimator.SetBool(Crouch,state);
     }
     public void ChangeLiftState(bool state)
     {
-        playerAnimator.SetBool("Lift",state);
+        playerAnimator.SetBool(Lift,state);
     }
     public void ChangePushState(bool state)
     {
-        playerAnimator.SetBool("Push",state);
+        playerAnimator.SetBool(Push,state);
     }
     public void ChangeJumpState(bool state)
     {
-        playerAnimator.SetBool("Jump",state);
+        playerAnimator.SetBool(Jump,state);
     }
     public void ChangePickState(bool state)
     {
-        playerAnimator.SetBool("Pick",state);
+        playerAnimator.SetBool(Pick,state);
+    }
+
+    public void ChangeVelocityY(float velocityY)
+    {
+        playerAnimator.SetFloat(VelocityY,velocityY);
     }
 }
