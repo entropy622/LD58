@@ -150,7 +150,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.6780052, y: -0.82840824}
+  m_Offset: {x: 0.53086203, y: -0.5820763}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -161,7 +161,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.98896027, y: 1.5927715}
+  m_Size: {x: 1.0115134, y: 2.0561175}
   m_EdgeRadius: 0
 --- !u!114 &1670399745378011462
 MonoBehaviour:
@@ -176,3 +176,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityTypeId: Jump
+  collectParticles: {fileID: 0}
+  visualMesh: {fileID: 0}
+  collectSound: {fileID: 0}
+  floatAmplitude: 0.3
+  floatSpeed: 2
+  rotationSpeed: 30
+  collectAnimationDuration: 0.5

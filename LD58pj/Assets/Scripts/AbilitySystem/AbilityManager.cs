@@ -6,6 +6,37 @@ using System.Linq;
 using QFramework;
 
 /// <summary>
+/// 能力图标配置类
+/// </summary>
+[System.Serializable]
+public class AbilityIconConfig
+{
+    [Header("基本信息")]
+    public string abilityTypeId;
+    public string displayName;
+    
+    [Header("视觉设置")]
+    public Sprite icon;
+    public Color color = Color.white;
+    
+    public AbilityIconConfig()
+    {
+        abilityTypeId = "";
+        displayName = "";
+        icon = null;
+        color = Color.white;
+    }
+    
+    public AbilityIconConfig(string typeId, string name, Sprite iconSprite, Color iconColor)
+    {
+        abilityTypeId = typeId;
+        displayName = name;
+        icon = iconSprite;
+        color = iconColor;
+    }
+}
+
+/// <summary>
 /// 能力管理器 - 统一管理所有能力状态的中心
 /// 所有能力相关的状态都在这里管理
 /// </summary>
@@ -54,6 +85,9 @@ public class AbilityManager : MonoSingleton<AbilityManager>
 
     [Header("全部能力")]
     public List<PlayerAbility> playerAbilities = new List<PlayerAbility>();
+    
+    [Header("图标配置")]
+    public List<AbilityIconConfig> abilityIconConfigs = new List<AbilityIconConfig>();
         
         
     /// <summary>
@@ -551,12 +585,31 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         for (int i = 0; i < abilitySlotImages.Count && i < equippedAbilities.Count; i++)
         {
             string abilityTypeId = equippedAbilities[i];
-            PlayerAbility data = GetAbilityData(abilityTypeId);
             
-            if (data != null && data.icon != null)
+            if (!string.IsNullOrEmpty(abilityTypeId))
             {
-                abilitySlotImages[i].sprite = data.icon;
-                abilitySlotImages[i].color = IsAbilityActive(abilityTypeId) ? data.color : Color.gray;
+                // 优先使用图标配置系统
+                var iconConfig = GetAbilityIconConfig(abilityTypeId);
+                if (iconConfig != null && iconConfig.icon != null)
+                {
+                    abilitySlotImages[i].sprite = iconConfig.icon;
+                    abilitySlotImages[i].color = IsAbilityActive(abilityTypeId) ? iconConfig.color : Color.gray;
+                }
+                else
+                {
+                    // 备用方案：从 PlayerAbility 获取
+                    PlayerAbility data = GetAbilityData(abilityTypeId);
+                    if (data != null && data.icon != null)
+                    {
+                        abilitySlotImages[i].sprite = data.icon;
+                        abilitySlotImages[i].color = IsAbilityActive(abilityTypeId) ? data.color : Color.gray;
+                    }
+                    else
+                    {
+                        abilitySlotImages[i].sprite = null;
+                        abilitySlotImages[i].color = Color.gray;
+                    }
+                }
             }
             else
             {
@@ -689,6 +742,9 @@ public class AbilityManager : MonoSingleton<AbilityManager>
             
             // 验证并清理无效的能力ID
             ValidateAndCleanAbilityIds();
+            
+            // 自动同步图标配置
+            SyncAbilityIconConfigurations();
         }
         
         Debug.Log($"[AbilityManager] PlayerController已注册，可用能力: {string.Join(", ", _abilityRegistry.Keys)}");
@@ -783,5 +839,87 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         }
         
         return EquipAbility(abilityTypeId, slotIndex);
+    }
+    
+    // ==================== 图标配置系统 ====================
+    
+    /// <summary>
+    /// 获取指定能力的图标配置
+    /// </summary>
+    public AbilityIconConfig GetAbilityIconConfig(string abilityTypeId)
+    {
+        if (string.IsNullOrEmpty(abilityTypeId)) return null;
+        
+        // 优先从配置列表中查找
+        var config = abilityIconConfigs.Find(c => c.abilityTypeId == abilityTypeId);
+        if (config != null)
+        {
+            return config;
+        }
+        
+        // 如果配置中没有，尝试从player能力中获取
+        var playerAbility = playerAbilities.Find(a => a.AbilityTypeId == abilityTypeId);
+        if (playerAbility != null && playerAbility.icon != null)
+        {
+            return new AbilityIconConfig(abilityTypeId, playerAbility.abilityName, playerAbility.icon, playerAbility.color);
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// 设置指定能力的图标配置
+    /// </summary>
+    public void SetAbilityIconConfig(string abilityTypeId, Sprite icon, Color color, string displayName = "")
+    {
+        if (string.IsNullOrEmpty(abilityTypeId)) return;
+        
+        var existingConfig = abilityIconConfigs.Find(c => c.abilityTypeId == abilityTypeId);
+        if (existingConfig != null)
+        {
+            existingConfig.icon = icon;
+            existingConfig.color = color;
+            if (!string.IsNullOrEmpty(displayName))
+                existingConfig.displayName = displayName;
+        }
+        else
+        {
+            var newConfig = new AbilityIconConfig(abilityTypeId, displayName, icon, color);
+            abilityIconConfigs.Add(newConfig);
+        }
+    }
+    
+    /// <summary>
+    /// 同步能力图标配置（从 playerAbilities 同步到 abilityIconConfigs）
+    /// </summary>
+    public void SyncAbilityIconConfigurations()
+    {
+        foreach (var playerAbility in playerAbilities)
+        {
+            if (playerAbility == null || string.IsNullOrEmpty(playerAbility.AbilityTypeId)) continue;
+            
+            var existingConfig = abilityIconConfigs.Find(c => c.abilityTypeId == playerAbility.AbilityTypeId);
+            if (existingConfig == null)
+            {
+                // 创建新配置
+                var newConfig = new AbilityIconConfig(
+                    playerAbility.AbilityTypeId,
+                    playerAbility.abilityName,
+                    playerAbility.icon,
+                    playerAbility.color
+                );
+                abilityIconConfigs.Add(newConfig);
+            }
+            else if (existingConfig.icon == null && playerAbility.icon != null)
+            {
+                // 更新空配置
+                existingConfig.icon = playerAbility.icon;
+                existingConfig.color = playerAbility.color;
+                if (string.IsNullOrEmpty(existingConfig.displayName))
+                    existingConfig.displayName = playerAbility.abilityName;
+            }
+        }
+        
+        Debug.Log($"[AbilityManager] 已同步 {abilityIconConfigs.Count} 个能力图标配置");
     }
 }

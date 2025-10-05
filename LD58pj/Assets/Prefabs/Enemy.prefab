@@ -101,8 +101,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   destroyDelay: 0.1
-  deathEffect: {fileID: 0}
+  deathEffect: {fileID: 2020537415801632686, guid: 6f4f21b41f537a741adeb07522764c6e, type: 3}
+  deathParticles: {fileID: 0}
   deathSound: {fileID: 0}
+  particleColor: {r: 1, g: 0, b: 0, a: 1}
+  particleCount: 20
+  particleLifetime: 1
+  particleSpeed: 5
+  createParticlesIfMissing: 1
 --- !u!58 &5456074633220434075
 CircleCollider2D:
   m_ObjectHideFlags: 0
