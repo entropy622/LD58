@@ -185,7 +185,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                Destroy(effect, 2f); // 默认2秒后销毁
+                Destroy(effect, 5f); // 默认2秒后销毁
             }
         }
         
