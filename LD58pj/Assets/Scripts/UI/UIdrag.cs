@@ -14,7 +14,6 @@ public class UIdrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointer
         var canvasTransform = GetComponentInParent<Canvas>().transform;
         transform.SetParent(canvasTransform, true);
         transform.SetAsLastSibling();
-        Debug.Log("鼠标按下了这个物体！");
         defaultpos = new Vector2(transform.position.x, transform.position.y);
     }
 
@@ -24,10 +23,11 @@ public class UIdrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointer
         transform.position = eventData.position;
     }
     public void OnPointerUp(PointerEventData eventData)
+
     {
+       
        checkandSwap();
        // transform.position = defaultpos;
-        Debug.Log("鼠标抬起了这个物体！");  
     }
 
 
@@ -53,10 +53,8 @@ public class UIdrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointer
         {
             if (checkcollision(slot))
             {
-                Debug.Log("碰到了槽位" + slot.name);
                 //记录当前物体的父物体
                 Transform originalParent = transform.parent;
-                
                 //如果槽位中已经有物体了，就交换位置
                 if (slot.childCount > 0)
                 {
@@ -66,12 +64,14 @@ public class UIdrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointer
                     other.position = originalParent.position;
                     transform.SetParent(slot, true);
                     transform.position = slot.position;
+                    return;
                 }
                 else
                 {
                     //如果槽位中没有物体，就直接放进去
                     transform.SetParent(slot, true);
                     transform.position = slot.position;
+                    return;
                 }
             }
         }
