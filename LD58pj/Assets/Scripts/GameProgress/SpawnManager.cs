@@ -9,6 +9,22 @@ using TMPro;
 /// </summary>
 public class SpawnManager : MonoSingleton<SpawnManager>
 {
+    // ==================== 新增：倒计时功能 ====================
+    [Header("倒计时设置")]
+    public float gameTimeLimit = 60f; // 游戏总时间（秒）
+    public TextMeshProUGUI timerText; // 计时器UI文本引用
+    public Color normalTimeColor = Color.white;
+    public Color warningTimeColor = Color.red;
+    public float warningThreshold = 10f; // 警告阈值（最后10秒）
+
+    private float timerTime;
+    private bool isTimerRunning = true;
+
+    // 倒计时事件
+    public System.Action OnTimeUp; // 时间结束事件
+    public System.Action<float> OnTimeChanged; // 时间变化事件
+    // ========================================================
+
     [Header("游戏设置")]
     public float gameTime = 120f; // 游戏总时间（秒）
     public int enemiesToUpgrade = 5; // 击败多少敌人后升级
@@ -61,17 +77,148 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     void Start()
     {
         InitializeGame();
+        InitializeTimer(); // 初始化计时器
     }
-    
+
+    // ==================== 新增：计时器初始化 ====================
+    private void InitializeTimer()
+    {
+        timerTime = gameTimeLimit;
+        UpdateTimerDisplay();
+
+        // 如果没有设置timerText，尝试自动查找
+        if (timerText == null)
+        {
+            timerText = FindObjectOfType<TextMeshProUGUI>();
+            if (timerText != null)
+            {
+                Debug.Log("[AbilityManager] 自动找到TimerText: " + timerText.name);
+            }
+            else
+            {
+                Debug.LogWarning("[AbilityManager] 未找到TimerText引用，请在Inspector中手动设置");
+            }
+        }
+    }
+    // ========================================================
+
     void Update()
     {
         if (gameActive)
         {
             UpdateGameTime();
             UpdateUI();
+            UpdateTimer();
         }
     }
-    
+
+    // ==================== 新增：计时器核心逻辑 ====================
+    private void UpdateTimer()
+    {
+        if (!isTimerRunning) return;
+
+        timerTime -= Time.deltaTime;
+        UpdateTimerDisplay();
+
+        // 触发时间变化事件
+        OnTimeChanged?.Invoke(timerTime);
+
+        // 检查时间是否结束
+        if (timerTime <= 0f)
+        {
+            timerTime = 0f;
+            TimerEnd();
+        }
+    }
+
+    private void UpdateTimerDisplay()
+    {
+        if (timerText != null)
+        {
+            timerText.text = FormatTime(timerTime);
+
+            // 时间警告效果
+            if (timerTime <= warningThreshold)
+            {
+                timerText.color = warningTimeColor;
+                // 可以在这里添加闪烁效果
+            }
+            else
+            {
+                timerText.color = normalTimeColor;
+            }
+        }
+    }
+
+    private string FormatTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    private void TimerEnd()
+    {
+        isTimerRunning = false;
+        Debug.Log("时间到！游戏结束");
+
+        // 触发时间结束事件
+        OnTimeUp?.Invoke();
+    }
+
+    // ==================== 新增：计时器公共API ====================
+    /// <summary>
+    /// 暂停计时器
+    /// </summary>
+    public void PauseTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    /// <summary>
+    /// 恢复计时器
+    /// </summary>
+    public void ResumeTimer()
+    {
+        isTimerRunning = true;
+    }
+
+    /// <summary>
+    /// 重置计时器
+    /// </summary>
+    public void ResetTimer()
+    {
+        timerTime = gameTimeLimit;
+        isTimerRunning = true;
+        UpdateTimerDisplay();
+    }
+
+    /// <summary>
+    /// 添加额外时间
+    /// </summary>
+    public void AddTime(float extraTime)
+    {
+        timerTime += extraTime;
+        UpdateTimerDisplay();
+    }
+
+    /// <summary>
+    /// 获取剩余时间
+    /// </summary>
+    public float GetRemainingTime()
+    {
+        return timerTime;
+    }
+
+    /// <summary>
+    /// 检查时间是否已到
+    /// </summary>
+    public bool IsTimeUp()
+    {
+        return timerTime <= 0f;
+    }
+    // ========================================================
+
     /// <summary>
     /// 初始化游戏
     /// </summary>
