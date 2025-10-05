@@ -114,6 +114,10 @@ MonoBehaviour:
   - {fileID: 9027676587178977252}
   - {fileID: 8635852714086655684}
   - {fileID: 5814012718172829251}
+  activeAbilityParents:
+  - {fileID: 9145543730243573825}
+  - {fileID: 1942867278883088072}
+  - {fileID: 8844588860107722033}
 --- !u!1 &724503192816394013
 GameObject:
   m_ObjectHideFlags: 0

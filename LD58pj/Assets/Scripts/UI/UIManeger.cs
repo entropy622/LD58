@@ -13,6 +13,9 @@ public class UIManeger : MonoBehaviour
     [Header("槽位父物体")]
     public List<Transform> abilitySlotParents = new List<Transform>();
 
+    [Header("活跃能力父槽位")]
+    public List<Transform> activeAbilityParents = new List<Transform>();
+
 
 
     //这里已经改为非预制体了，请把所有abilityPrefabValues都设置为场景中的物体
@@ -22,8 +25,8 @@ public class UIManeger : MonoBehaviour
     private List<string> lastActiveAbilities = new List<string>();
 
 
-    // 存储每个预制体的父物体
-    private Dictionary<GameObject, Transform> abilityOriginalParents = new Dictionary<GameObject, Transform>();
+    // 存储每个父物体的原始子物体   
+    private Dictionary<Transform, List<Transform>> abilityOriginalChildren = new Dictionary<Transform, List<Transform>>();
     // 合成后的注册表
     private Dictionary<string, GameObject> abilityPrefabRegistry = new Dictionary<string, GameObject>();
 
@@ -52,15 +55,16 @@ public class UIManeger : MonoBehaviour
         }
 
         // 存储每个预制体的原始父物体
-        storeabilityOriginalParents();
+        changeequippedAbilities();
     }
 
     void Start()
     {
         lastActiveAbilities = GetActiveAbilities();
         lastEquippedAbilities = GetEquippedAbilities();
+        Debug.Log("UIManeger Start" + GetActiveAbilities().Count);
         ShowActiveAbilities();
-        storeabilityOriginalParents();
+        changeequippedAbilities();
 
         // ShowEquippedAbilities();
 
@@ -68,18 +72,17 @@ public class UIManeger : MonoBehaviour
 
     void Update()
     {
-        storeabilityOriginalParents();
-        if (activeablitieschanged())
-        {
-            Debug.Log("UIManeger检测到activeablitieschanged");
-            ShowActiveAbilities();
 
-        }
-        if (equippedablitieschanged())
-        {
-            // ShowEquippedAbilities();
+    
+    
+        ShowActiveAbilities();
 
-        }
+        
+
+        changeequippedAbilities();
+            
+
+    
     }
 
 
@@ -87,18 +90,94 @@ public class UIManeger : MonoBehaviour
 
     private void storeabilityOriginalParents()
     {
-        abilityOriginalParents.Clear();
-        foreach (GameObject obj in abilityPrefabValues)
+        abilityOriginalChildren.Clear();
+        foreach (Transform parent in abilitySlotParents)
         {
-            if (obj != null && obj.transform.parent != null)
+            List<Transform> children = new List<Transform>();
+            foreach (Transform child in parent)
             {
-                abilityOriginalParents[obj] = obj.transform.parent;
+                children.Add(child);
             }
+            abilityOriginalChildren[parent] = children;
         }
     }
 
 
+    private void changeequippedAbilities()
+    {
+        //检测活跃能力父槽位的父类对应的子类和originparents[父槽位]比是否发生了变化
+        for (int i = 0; i < activeAbilityParents.Count; i++)
+        {
+            Transform parent = activeAbilityParents[i];
+            //如果父类下有子类
+            if (parent.childCount > 0)
+            {
+                Transform child = parent.GetChild(0);
+                //如果原始为空
+                if (!abilityOriginalChildren.ContainsKey(parent) || abilityOriginalChildren[parent].Count == 0)
+                {
+                    //说明是新添加的子类
+                    //通过字典反向查找子类对应的key
+                    foreach (var kvp in abilityPrefabRegistry)
+                    {
+                        if (kvp.Value == child.gameObject)
+                        {
+                            //添加到equippedAbilities中
+                            if (!AbilityManager.Instance.equippedAbilities.Contains(kvp.Key))
+                            {
+                                AbilityManager.Instance.equippedAbilities.Add(kvp.Key);
+                                Debug.Log("UIManeger检测到equippedAbilities添加了" + kvp.Key);
+                            }
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                //如果原始不为空
+                //通过字典反向查找父类的原始子类
+                Transform originalChild = abilityOriginalChildren[parent][0];
 
+                //父类的原始子类不是当前子类
+                if (originalChild != child)
+                {
+                    //说明是替换了原始子类
+                    //将原始子类从equippedAbilities中移除
+                    foreach (var kvp in abilityPrefabRegistry)
+                    {
+                        if (kvp.Value == originalChild.gameObject)
+                        {
+                            if (AbilityManager.Instance.equippedAbilities.Contains(kvp.Key))
+                            {
+                                AbilityManager.Instance.equippedAbilities.Remove(kvp.Key);
+                                Debug.Log("UIManeger检测到equippedAbilities移除了" + kvp.Key);
+                            }
+                            break;
+                        }
+                    }
+                    //通过字典反向查找子类对应的key
+                    foreach (var kvp in abilityPrefabRegistry)
+                    {
+                        if (kvp.Value == child.gameObject)
+                        {
+
+                            //添加到equippedAbilities中
+                            if (!AbilityManager.Instance.equippedAbilities.Contains(kvp.Key))
+                            {
+                                AbilityManager.Instance.equippedAbilities.Add(kvp.Key);
+                                Debug.Log("UIManeger检测到equippedAbilities添加了" + kvp.Key);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+            }
+
+        }
+        //将原始子类更新为当前子类
+        storeabilityOriginalParents();
+    
+    }
 
 
 
