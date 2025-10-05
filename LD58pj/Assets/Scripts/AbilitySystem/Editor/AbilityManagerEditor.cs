@@ -9,6 +9,8 @@ using System.Linq;
 [CustomEditor(typeof(AbilityManager))]
 public class AbilityManagerEditor : Editor
 {
+    const int MAX_ABILITY = 10;
+    
     private AbilityManager targetManager;
     private List<string> availableAbilityIds = new List<string>();
     private bool showEquippedAbilities = true;
@@ -57,9 +59,6 @@ public class AbilityManagerEditor : Editor
         
         EditorGUILayout.Space();
         
-        // 绘制图标配置列表
-        DrawIconConfigsList();
-        
         // 验证能力ID
         ValidateAbilityIds();
         
@@ -96,11 +95,11 @@ public class AbilityManagerEditor : Editor
             EditorGUI.indentLevel++;
             
             // 确保列表大小匹配槽位数量
-            while (targetManager.equippedAbilities.Count < targetManager.maxAbilitySlots)
+            while (targetManager.equippedAbilities.Count < MAX_ABILITY)
             {
                 targetManager.equippedAbilities.Add("");
             }
-            while (targetManager.equippedAbilities.Count > targetManager.maxAbilitySlots)
+            while (targetManager.equippedAbilities.Count > MAX_ABILITY)
             {
                 targetManager.equippedAbilities.RemoveAt(targetManager.equippedAbilities.Count - 1);
             }
@@ -294,127 +293,5 @@ public class AbilityManagerEditor : Editor
         
         EditorUtility.SetDirty(targetManager);
         Debug.Log("[AbilityManagerEditor] 已清除所有无效的能力ID");
-    }
-
-    private void DrawIconConfigsList()
-    {
-        showIconConfigs = EditorGUILayout.Foldout(showIconConfigs, "图标配置列表", true);
-
-        if (showIconConfigs)
-        {
-            EditorGUI.indentLevel++;
-
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("数量:", GUILayout.Width(60));
-            int newCount = EditorGUILayout.IntField(targetManager.abilityIconConfigs.Count);
-            if (newCount != targetManager.abilityIconConfigs.Count)
-            {
-                while (targetManager.abilityIconConfigs.Count < newCount)
-                {
-                    targetManager.abilityIconConfigs.Add(new AbilityIconConfig());
-                }
-
-                while (targetManager.abilityIconConfigs.Count > newCount)
-                {
-                    targetManager.abilityIconConfigs.RemoveAt(targetManager.abilityIconConfigs.Count - 1);
-                }
-
-                EditorUtility.SetDirty(targetManager);
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            for (int i = 0; i < targetManager.abilityIconConfigs.Count; i++)
-            {
-                var config = targetManager.abilityIconConfigs[i];
-
-                EditorGUILayout.BeginVertical("box");
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"配置 {i}:", EditorStyles.boldLabel, GUILayout.Width(60));
-
-                // 删除按钮
-                if (GUILayout.Button("X", GUILayout.Width(20)))
-                {
-                    targetManager.abilityIconConfigs.RemoveAt(i);
-                    EditorUtility.SetDirty(targetManager);
-                    break;
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                // 能力ID下拉选择
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("能力ID:", GUILayout.Width(60));
-
-                int selectedIndex = GetAbilityIndex(config.abilityTypeId);
-                List<string> options = new List<string> { "无" };
-                options.AddRange(availableAbilityIds);
-
-                int newIndex = EditorGUILayout.Popup(selectedIndex, options.ToArray());
-                if (newIndex != selectedIndex)
-                {
-                    config.abilityTypeId = newIndex == 0 ? "" : availableAbilityIds[newIndex - 1];
-                    EditorUtility.SetDirty(targetManager);
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                // 显示名称
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("显示名:", GUILayout.Width(60));
-                string newDisplayName = EditorGUILayout.TextField(config.displayName);
-                if (newDisplayName != config.displayName)
-                {
-                    config.displayName = newDisplayName;
-                    EditorUtility.SetDirty(targetManager);
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                // 图标
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("图标:", GUILayout.Width(60));
-                Sprite newIcon = (Sprite)EditorGUILayout.ObjectField(config.icon, typeof(Sprite), false);
-                if (newIcon != config.icon)
-                {
-                    config.icon = newIcon;
-                    EditorUtility.SetDirty(targetManager);
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                // 颜色
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("颜色:", GUILayout.Width(60));
-                Color newColor = EditorGUILayout.ColorField(config.color);
-                if (newColor != config.color)
-                {
-                    config.color = newColor;
-                    EditorUtility.SetDirty(targetManager);
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.EndVertical();
-                EditorGUILayout.Space();
-            }
-
-            // 添加新配置按钮
-            if (GUILayout.Button("添加图标配置"))
-            {
-                targetManager.abilityIconConfigs.Add(new AbilityIconConfig());
-                EditorUtility.SetDirty(targetManager);
-            }
-
-            // 同步按钮
-            if (GUILayout.Button("从能力列表同步图标配置"))
-            {
-                targetManager.SyncAbilityIconConfigurations();
-                EditorUtility.SetDirty(targetManager);
-            }
-
-            EditorGUI.indentLevel--;
-        }
     }
 }
