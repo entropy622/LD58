@@ -87,8 +87,8 @@ public class PlayerAnimatorManager : MonoSingleton<PlayerAnimatorManager>
         playerAnimator.SetBool(Pick,state);
     }
 
-    public void ChangeVelocityY(float velocityY)
+    public void ChangeVelocityY(float v)
     {
-        playerAnimator.SetFloat(VelocityY,velocityY);
+        playerAnimator.SetFloat(VelocityY,v);
     }
 }

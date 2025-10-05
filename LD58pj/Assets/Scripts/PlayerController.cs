@@ -120,17 +120,17 @@ public class PlayerController : MonoSingleton<PlayerController>
         // 更新朝向和动画
         UpdateFacing();
         UpdateVisuals();
+        
+        UpdateVelocity();
     }
     
-    void FixedUpdate()
+    void FixedUpdate() 
     {
         // 物理更新AbilityManager指定的能力
         FixedUpdateActiveAbilities();
         
         // 防止卡在tile缝隙中的优化
         PreventTileGapSticking();
-        
-        UpdateVelocity();
     }
 
     void UpdateVelocity()
