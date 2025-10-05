@@ -96,7 +96,11 @@ MonoBehaviour:
   abilityTypeId: Jump
   collectParticles: {fileID: 0}
   visualMesh: {fileID: 0}
-  collectSound: {fileID: 0}
+  collectSounds:
+  - {fileID: 8300000, guid: 1e0d4a3bc24bf2a43bdb006ebfd768dd, type: 3}
+  - {fileID: 8300000, guid: c8bea8b9643958b47a770958b34169e3, type: 3}
+  - {fileID: 8300000, guid: a1c88244e19db084fb24e54adf17ee66, type: 3}
+  soundVolume: 0.7
   collectAnimationDuration: 0.5
 --- !u!212 &4618684324728998669
 SpriteRenderer:

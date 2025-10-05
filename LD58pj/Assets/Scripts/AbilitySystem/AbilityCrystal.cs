@@ -12,7 +12,11 @@ public class AbilityCrystal : MonoBehaviour
     [Header("视觉效果")]
     public ParticleSystem collectParticles;
     public GameObject visualMesh; // 水晶的视觉模型
-    public AudioClip collectSound;
+    
+    [Header("音效设置")]
+    public AudioClip[] collectSounds; // 收集音效组
+    [Range(0f, 1f)]
+    public float soundVolume = 0.7f; // 音效音量
     
     [Header("动画设置")]
     public float collectAnimationDuration = 0.5f;
@@ -86,7 +90,17 @@ public class AbilityCrystal : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
-            audioSource.volume = 0.7f;
+            audioSource.volume = soundVolume;
+        }
+        else
+        {
+            audioSource.volume = soundVolume;
+        }
+        
+        // 隐藏AudioSource组件在游戏视图中的显示
+        if (audioSource != null)
+        {
+            audioSource.hideFlags = HideFlags.HideInInspector;
         }
         
         // 如果没有指定视觉模型，使用自身
@@ -147,9 +161,6 @@ public class AbilityCrystal : MonoBehaviour
         // 播放粒子效果
         PlayCollectParticles();
         
-        // 播放动画
-        GetComponent<CrystalAnimation>().PlayAbsorbedAnimation();
-        
         // 收集动画
         yield return StartCoroutine(PlayCollectAnimation());
         
@@ -162,9 +173,19 @@ public class AbilityCrystal : MonoBehaviour
     /// </summary>
     private void PlayCollectSound()
     {
-        if (audioSource != null && collectSound != null)
+        if (audioSource != null && collectSounds != null && collectSounds.Length > 0)
         {
-            audioSource.PlayOneShot(collectSound);
+            // 从音效组中随机选择一个
+            AudioClip randomCollectSound = collectSounds[UnityEngine.Random.Range(0, collectSounds.Length)];
+            if (randomCollectSound != null)
+            {
+                audioSource.PlayOneShot(randomCollectSound, soundVolume);
+                Debug.Log($"[AbilityCrystal] 播放收集音效: {randomCollectSound.name}");
+            }
+        }
+        else if (collectSounds == null || collectSounds.Length == 0)
+        {
+            Debug.LogWarning("[AbilityCrystal] 没有配置收集音效，跳过音效播放");
         }
     }
     

@@ -13,7 +13,11 @@ public class Enemy : MonoBehaviour
     [Header("视觉效果")]
     public GameObject deathEffect; // 死亡特效预制体
     public ParticleSystem deathParticles; // 死亡粒子系统
-    public AudioClip deathSound; // 死亡音效
+    
+    [Header("音效设置")]
+    public AudioClip[] deathSounds; // 死亡音效组
+    [Range(0f, 1f)]
+    public float soundVolume = 0.7f; // 音效音量
     
     [Header("粒子效果设置")]
     public Color particleColor = Color.red;
@@ -37,6 +41,17 @@ public class Enemy : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
+            audioSource.volume = soundVolume;
+        }
+        else
+        {
+            audioSource.volume = soundVolume;
+        }
+        
+        // 隐藏AudioSource组件在游戏视图中的显示
+        if (audioSource != null)
+        {
+            audioSource.hideFlags = HideFlags.HideInInspector;
         }
         
         // 确保有碰撞器和Rigidbody2D
@@ -179,9 +194,19 @@ public class Enemy : MonoBehaviour
         }
         
         // 播放死亡音效
-        if (audioSource != null && deathSound != null)
+        if (audioSource != null && deathSounds != null && deathSounds.Length > 0)
         {
-            audioSource.PlayOneShot(deathSound);
+            // 从音效组中随机选择一个
+            AudioClip randomDeathSound = deathSounds[Random.Range(0, deathSounds.Length)];
+            if (randomDeathSound != null)
+            {
+                audioSource.PlayOneShot(randomDeathSound, soundVolume);
+                Debug.Log($"[Enemy] 播放死亡音效: {randomDeathSound.name}");
+            }
+        }
+        else if (deathSounds == null || deathSounds.Length == 0)
+        {
+            Debug.LogWarning("[Enemy] 没有配置死亡音效，跳过音效播放");
         }
         
         // 简单的视觉反馈：快速缩小
