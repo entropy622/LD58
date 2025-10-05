@@ -144,7 +144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2824801683158432359, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2824801683158432359, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
       propertyPath: m_LocalRotation.w
@@ -179,23 +179,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
---- !u!1 &446337312 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
-  m_PrefabInstance: {fileID: 1290465945427560124}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &446337313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 446337312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62348b3db51281419cb62da775026ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +634,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1321626038}
-  - component: {fileID: 1321626037}
   m_Layer: 0
   m_Name: managers
   m_TagString: Untagged
@@ -659,22 +641,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1321626037
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321626036}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 106395c63ae9f8a4aad10756d80b74c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  equippedAbilities:
-  - Jump
-  - Movement
-  activeAbilities: []
 --- !u!4 &1321626038
 Transform:
   m_ObjectHideFlags: 0
@@ -740,6 +706,11 @@ MonoBehaviour:
   - Balloon
   - Movement
   - Jump
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   activeAbilities: []
@@ -816,7 +787,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -25351,8 +25322,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 2492007399394968610, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
   maxEnemies: 40
   enemySpawnInterval: 1
-  spawnAreaMin: {x: -106.9, y: -7.45}
-  spawnAreaMax: {x: -75.1, y: -24}
+  spawnAreaMin: {x: -97.6, y: 10.3}
+  spawnAreaMax: {x: -61.3, y: -24.1}
   minDistanceFromPlayer: 3
   abilityCrystalPrefab: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
   crystalSpawnDelay: 1
@@ -31227,10 +31198,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 446337313}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
 --- !u!1001 &1366361872781423165
 PrefabInstance:

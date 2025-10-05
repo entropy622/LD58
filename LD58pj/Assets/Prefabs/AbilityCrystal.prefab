@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1670399745378011462}
   - component: {fileID: 4618684324728998669}
   - component: {fileID: 395767172278018794}
+  - component: {fileID: 170670191399022449}
   m_Layer: 0
   m_Name: AbilityCrystal
   m_TagString: Untagged
@@ -170,3 +171,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &170670191399022449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6263336853549479528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e62348b3db51281419cb62da775026ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

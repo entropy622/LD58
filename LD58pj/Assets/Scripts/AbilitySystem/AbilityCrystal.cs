@@ -147,6 +147,9 @@ public class AbilityCrystal : MonoBehaviour
         // 播放粒子效果
         PlayCollectParticles();
         
+        // 播放动画
+        GetComponent<CrystalAnimation>().PlayAbsorbedAnimation();
+        
         // 收集动画
         yield return StartCoroutine(PlayCollectAnimation());
         

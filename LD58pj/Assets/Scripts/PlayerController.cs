@@ -218,17 +218,13 @@ public class PlayerController : MonoSingleton<PlayerController>
     
     private void InitializeAbilityManager()
     {
-        // 如果没有手动指定AbilityManager，尝试获取实例
+
+        abilityManager = AbilityManager.Instance;
         if (abilityManager == null)
         {
-            abilityManager = AbilityManager.Instance;
-            if (abilityManager == null)
-            {
-                Debug.LogWarning("AbilityManager未找到，能力系统将不会工作");
-                return;
-            }
+            Debug.LogWarning("AbilityManager未找到，能力系统将不会工作");
+            return;
         }
-        
         // 向AbilityManager注册当前玩家控制器
         abilityManager.RegisterPlayerController(this);
     }
