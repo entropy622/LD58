@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class UIManeger : MonoBehaviour
 {
-    [Header("能力预制体注册表key的key")]
+    [Header("能力注册表的key")]
     public List<string> abilityPrefabkeyKeys = new List<string> { "Movement", "Jump", "IronBlock", "IceBlock", "GravityFlip", "Dash", "Balloon" };
 
-    [Header("能力预制体注册表value")]
-    public List<GameObject> abilityPrefabValues = new List<GameObject>();
+    [Header("能力注册表的value")]
+        public List<GameObject> abilityPrefabValues = new List<GameObject>();
 
-    [Header("UI父节点")]
-    public Transform uiParent; // 用于装备的能力UI
-
-    public Transform ui2Parent; // 用于激活的能力UI
+    //这里已经改为非预制体了，请把所有abilityPrefabValues都设置为场景中的物体
+    //然后在ShowActiveAbilities中通过SetActive来控制显示和隐藏
 
     private List<string> lastEquippedAbilities = new List<string>();
     private List<string> lastActiveAbilities = new List<string>();
@@ -74,30 +72,20 @@ public class UIManeger : MonoBehaviour
     public void ShowEquippedAbilities()
     {
         List<string> equippedAbilities = GetEquippedAbilities();
-        //根据equippedAbilities内容，通过abilityPrefabRegistry生成UI
-        //  // 请在Inspector中绑定或查找你的UI父节点
-        if (uiParent == null)
+        // 先隐藏所有 abilityPrefabValues 场景物体
+        foreach (GameObject obj in abilityPrefabValues)
         {
-            Debug.LogWarning("UI父节点未设置，无法生成能力UI");
-            return;
+            if (obj != null)
+                obj.SetActive(false);
         }
-        // 清空旧UI
-        List<GameObject> children = new List<GameObject>();
-        foreach (Transform child in uiParent)
-        {
-            children.Add(child.gameObject);
-        }
-        for (int i = 0; i < children.Count; i++)
-        {
-            Destroy(children[i]);
-        }
-        // 生成新UI
+        // 再显示装备的能力物体
         foreach (string abilityTypeId in equippedAbilities)
         {
             if (!string.IsNullOrEmpty(abilityTypeId) && abilityPrefabRegistry.ContainsKey(abilityTypeId))
             {
-                GameObject prefab = abilityPrefabRegistry[abilityTypeId];
-                Instantiate(prefab, uiParent);
+                GameObject obj = abilityPrefabRegistry[abilityTypeId];
+                if (obj != null)
+                    obj.SetActive(true);
             }
         }
     }
@@ -105,31 +93,20 @@ public class UIManeger : MonoBehaviour
     public void ShowActiveAbilities()
     {
         List<string> activeAbilities = GetActiveAbilities();
-        //根据activeAbilities内容，通过abilityPrefabRegistry生成UI
-        // 请在Inspector中绑定或查找你的UI父节点
-        if (ui2Parent == null)
+        // 先隐藏所有 abilityPrefabValues 场景物体
+        foreach (GameObject obj in abilityPrefabValues)
         {
-            Debug.LogWarning("UI父节点未设置，无法生成能力UI");
-            return;
+            if (obj != null)
+                obj.SetActive(false);
         }
-        // 清空旧UI
-        List<GameObject> children = new List<GameObject>();
-        foreach (Transform child in ui2Parent)
-        {
-            children.Add(child.gameObject);
-        }
-        for (int i = 0; i < children.Count; i++)
-        {
-            Destroy(children[i]);
-        }
-
-        // 生成新UI
+        // 再显示激活的能力物体
         foreach (string abilityTypeId in activeAbilities)
         {
             if (!string.IsNullOrEmpty(abilityTypeId) && abilityPrefabRegistry.ContainsKey(abilityTypeId))
             {
-                GameObject prefab = abilityPrefabRegistry[abilityTypeId];
-                Instantiate(prefab, ui2Parent);
+                GameObject obj = abilityPrefabRegistry[abilityTypeId];
+                if (obj != null)
+                    obj.SetActive(true);
             }
         }
     }
