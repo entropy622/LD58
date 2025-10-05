@@ -104,7 +104,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     void Start()
     {
         SetupEventHandlers();
-        
         groundLayer = LayerMask.GetMask("Ground");
     }
     
@@ -115,7 +114,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         UpdateInteraction();
         
         // 执行AbilityManager指定的能力
-        ExecuteActiveAbilities();
+        ExecuteEquippedAbilities();
         
         // 更新朝向和动画
         UpdateFacing();
@@ -190,7 +189,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         // 初始化所有能力实例
         _movementAbility.Initialize(this);
         _jumpAbility.Initialize(this);
-        _ironBlockAbility.Initialize(this);
+        // _ironBlockAbility.Initialize(this);
         _balloonAbility.Initialize(this);
         _gravityFlipAbility.Initialize(this);
         _iceBlockAbility.Initialize(this);
@@ -199,7 +198,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         // 注册能力到字典中
         RegisterAbility(_movementAbility);
         RegisterAbility(_jumpAbility);
-        RegisterAbility(_ironBlockAbility);
+        // RegisterAbility(_ironBlockAbility);
         RegisterAbility(_balloonAbility);
         RegisterAbility(_gravityFlipAbility);
         RegisterAbility(_iceBlockAbility);
@@ -245,12 +244,12 @@ public class PlayerController : MonoSingleton<PlayerController>
     /// <summary>
     /// 执行AbilityManager中激活的能力
     /// </summary>
-    private void ExecuteActiveAbilities()
+    private void ExecuteEquippedAbilities()
     {
         if (abilityManager == null) return;
 
-        var activeAbilities = abilityManager.GetEquippedAbilities();
-        foreach (string abilityTypeId in activeAbilities)
+        var equippedAbilities = abilityManager.GetEquippedAbilities();
+        foreach (string abilityTypeId in equippedAbilities)
         {
             if (_abilityRegistry.TryGetValue(abilityTypeId, out PlayerAbility ability))
             {
