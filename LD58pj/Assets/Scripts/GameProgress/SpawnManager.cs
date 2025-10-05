@@ -37,6 +37,11 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public Vector2 spawnAreaMax = new Vector2(8f, 4f); // 生成区域最大坐标
     public float minDistanceFromPlayer = 3f; // 距离玩家的最小距离
     
+    [Header("地面检测设置")]
+    public LayerMask groundLayerMask = -1; // 地面层级掩码，默认检测所有层
+    public float groundCheckRadius = 0.5f; // 地面检测半径
+    public bool avoidGroundTiles = true; // 是否避免在地面上生成
+    
     [Header("水晶生成设置")]
     public GameObject abilityCrystalPrefab;
     public float crystalSpawnDelay = 1f; // 升级后水晶生成延迟
@@ -391,12 +396,12 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     }
     
     /// <summary>
-    /// 获取有效的生成位置（距离玩家足够远）
+    /// 获取有效的生成位置（距离玩家足够远且不在地面上）
     /// </summary>
     private Vector2 GetValidSpawnPosition()
     {
         Vector2 spawnPosition;
-        int maxAttempts = 20;
+        int maxAttempts = 50; // 增加尝试次数，因为增加了地面检测
         int attempts = 0;
         
         do
@@ -406,12 +411,72 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 Random.Range(spawnAreaMin.y, spawnAreaMax.y)
             );
             attempts++;
+            
+            // 如果超过最大尝试次数，退出循环防止无限循环
+            if (attempts >= maxAttempts)
+            {
+                Debug.LogWarning($"[SpawnManager] 在 {maxAttempts} 次尝试后未能找到合适的生成位置，使用最后一次生成的位置");
+                break;
+            }
         }
-        while (playerTransform != null && 
-               Vector2.Distance(spawnPosition, playerTransform.position) < minDistanceFromPlayer && 
-               attempts < maxAttempts);
+        while (!IsValidSpawnLocation(spawnPosition));
         
         return spawnPosition;
+    }
+    
+    /// <summary>
+    /// 检查指定位置是否适合生成
+    /// </summary>
+    /// <param name="position">要检查的位置</param>
+    /// <returns>是否适合生成</returns>
+    private bool IsValidSpawnLocation(Vector2 position)
+    {
+        // 1. 检查与玩家的距离
+        if (playerTransform != null)
+        {
+            float distanceToPlayer = Vector2.Distance(position, playerTransform.position);
+            if (distanceToPlayer < minDistanceFromPlayer)
+            {
+                return false;
+            }
+        }
+        
+        // 2. 检查是否在地面上（如果启用了避免地面生成）
+        if (avoidGroundTiles && IsOnGround(position))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// 检查指定位置是否在地面上（有 "Ground" tag 的 TileMap 或其他物体）
+    /// </summary>
+    /// <param name="position">要检查的位置</param>
+    /// <returns>是否在地面上</returns>
+    private bool IsOnGround(Vector2 position)
+    {
+        // 使用 OverlapCircle 检测指定位置是否有地面碰撞体
+        Collider2D groundCollider = Physics2D.OverlapCircle(position, groundCheckRadius, groundLayerMask);
+        
+        if (groundCollider != null)
+        {
+            // 检查是否有 "Ground" tag
+            if (groundCollider.CompareTag("Ground"))
+            {
+                return true;
+            }
+            
+            // 可选：检查是否是 TileMap（TileMap 组件通常在父物体上）
+            if (groundCollider.GetComponent<UnityEngine.Tilemaps.TilemapCollider2D>() != null ||
+                groundCollider.GetComponentInParent<UnityEngine.Tilemaps.TilemapCollider2D>() != null)
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     #endregion
@@ -448,7 +513,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         // 随机选择一个可用能力
         string randomAbility = availableAbilities[Random.Range(0, availableAbilities.Count)];
         
-        // 获取生成位置
+        // 获取生成位置（使用相同的地面检测逻辑）
         Vector2 spawnPosition = GetValidSpawnPosition();
         
         // 生成水晶
@@ -600,7 +665,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     #region Debug方法
     
     /// <summary>
-    /// 在Scene视图中绘制生成区域
+    /// 在Scene视图中绘制生成区域和调试信息
     /// </summary>
     private void OnDrawGizmosSelected()
     {
@@ -615,6 +680,36 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(playerTransform.position, minDistanceFromPlayer);
+        }
+        
+        // 绘制地面检测范围示例（在生成区域内的几个点）
+        if (avoidGroundTiles)
+        {
+            Gizmos.color = Color.yellow;
+            
+            // 在生成区域内绘制几个地面检测点示例
+            for (int x = 0; x < 5; x++)
+            {
+                for (int y = 0; y < 3; y++)
+                {
+                    Vector2 testPos = new Vector2(
+                        Mathf.Lerp(spawnAreaMin.x, spawnAreaMax.x, x / 4f),
+                        Mathf.Lerp(spawnAreaMin.y, spawnAreaMax.y, y / 2f)
+                    );
+                    
+                    // 如果该位置在地面上，用红色显示；否则用绿色显示
+                    if (Application.isPlaying && IsOnGround(testPos))
+                    {
+                        Gizmos.color = Color.red;
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                    
+                    Gizmos.DrawWireSphere(testPos, groundCheckRadius);
+                }
+            }
         }
     }
     
