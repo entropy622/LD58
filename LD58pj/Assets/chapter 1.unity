@@ -24953,7 +24953,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -86.62247, y: -18.479916, z: -13.907679}
+  m_LocalPosition: {x: -59.479736, y: 11.9706745, z: -111.26143}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25573,11 +25573,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106395c63ae9f8a4aad10756d80b74c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTimeLimit: 60
-  timerText: {fileID: 0}
-  normalTimeColor: {r: 1, g: 1, b: 1, a: 1}
-  warningTimeColor: {r: 1, g: 0, b: 0, a: 1}
-  warningThreshold: 10
   maxAbilitySlots: 2
   equippedAbilities:
   - Jump
@@ -25647,11 +25642,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106395c63ae9f8a4aad10756d80b74c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTimeLimit: 60
-  timerText: {fileID: 0}
-  normalTimeColor: {r: 1, g: 1, b: 1, a: 1}
-  warningTimeColor: {r: 1, g: 0, b: 0, a: 1}
-  warningThreshold: 10
   maxAbilitySlots: 5
   equippedAbilities:
   - Balloon
@@ -25773,6 +25763,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41600cc8b55d7714abf79805ea0dcc0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameTimeLimit: 60
+  timerText: {fileID: 0}
+  normalTimeColor: {r: 1, g: 1, b: 1, a: 1}
+  warningTimeColor: {r: 1, g: 0, b: 0, a: 1}
+  warningThreshold: 10
   gameTime: 120
   enemiesToUpgrade: 5
   enemyPrefab: {fileID: 2492007399394968610, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
@@ -28185,12 +28180,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestPlayer
       objectReference: {fileID: 0}
-    - target: {fileID: 6486344990955793619, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: _jumpAbility.jumpPower
-      value: 20
+    - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6486344990955793619, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: _movementAbility._isEnabled
+    - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
@@ -28232,22 +28231,6 @@ PrefabInstance:
     - target: {fileID: 7083903011918596423, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9144552267729993808, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: m_Size.x
-      value: 5.0315514
-      objectReference: {fileID: 0}
-    - target: {fileID: 9144552267729993808, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: m_Size.y
-      value: 12.786284
-      objectReference: {fileID: 0}
-    - target: {fileID: 9144552267729993808, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: m_Offset.x
-      value: -0.10186005
-      objectReference: {fileID: 0}
-    - target: {fileID: 9144552267729993808, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: m_Offset.y
-      value: -0.76695776
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
