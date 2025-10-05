@@ -15,15 +15,11 @@ public class AbilityCrystal : MonoBehaviour
     public AudioClip collectSound;
     
     [Header("动画设置")]
-    public float floatAmplitude = 0.3f;
-    public float floatSpeed = 2f;
-    public float rotationSpeed = 30f;
     public float collectAnimationDuration = 0.5f;
     
     private AbilityManager abilityManager;
     private PlayerAbility ability;
     private bool isCollected = false;
-    private Vector3 originalPosition;
     private AudioSource audioSource;
     
     void Start()
@@ -43,50 +39,31 @@ public class AbilityCrystal : MonoBehaviour
         }
 
         // 设置水晶外观（优先使用图标配置系统）
-        SetCrystalAppearance();
+        StartCoroutine(SetCrystalAppearanceCoroutine());
         
         // 初始化组件
         InitializeComponents();
-        
-        // 记录初始位置用于浮动动画
-        originalPosition = transform.position;
     }
     
     /// <summary>
     /// 设置水晶外观（图标和颜色）
     /// </summary>
-    private void SetCrystalAppearance()
+    private IEnumerator SetCrystalAppearanceCoroutine()
     {
+        yield return null;
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
         {
             Debug.LogWarning("[AbilityCrystal] 找不到SpriteRenderer组件");
-            return;
         }
         
-        // 优先使用图标配置系统
-        var iconConfig = abilityManager.GetAbilityIconConfig(abilityTypeId);
-        if (iconConfig != null && iconConfig.icon != null)
-        {
-            spriteRenderer.sprite = iconConfig.icon;
-            spriteRenderer.color = iconConfig.color;
-            Debug.Log($"[AbilityCrystal] 使用图标配置设置水晶外观: {abilityTypeId}");
-            return;
-        }
-        
-        // 备用方案：从 playerAbilities 获取
-        ability = abilityManager.playerAbilities.Find(x => x.AbilityTypeId == abilityTypeId);
+        // 直接从 playerAbilities 获取图标
+        ability = PlayerController.Instance._abilityRegistry[abilityTypeId];
         if (ability != null && ability.icon != null)
         {
             spriteRenderer.sprite = ability.icon;
-            spriteRenderer.color = ability.color;
             Debug.Log($"[AbilityCrystal] 使用PlayerAbility设置水晶外观: {abilityTypeId}");
-            return;
         }
-        
-        // 都没有找到，使用默认外观
-        Debug.LogWarning($"[AbilityCrystal] 无法为能力ID {abilityTypeId} 找到图标配置，使用默认外观");
-        spriteRenderer.color = Color.white; // 默认颜色
     }
     
     void Update()
@@ -124,26 +101,6 @@ public class AbilityCrystal : MonoBehaviour
             collectParticles = GetComponentInChildren<ParticleSystem>();
         }
     }
-    
-    /// <summary>
-    /// 水晶浮动和旋转动画
-    /// </summary>
-    // private void AnimateCrystal()
-    // {
-    //     // 浮动动画
-    //     float floatY = Mathf.Sin(Time.time * floatSpeed) * floatAmplitude;
-    //     transform.position = originalPosition + Vector3.up * floatY;
-    //     
-    //     // 旋转动画
-    //     transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
-    //     
-    //     // 可选：脉冲缩放效果
-    //     float pulseScale = 1f + Mathf.Sin(Time.time * floatSpeed * 2f) * 0.05f;
-    //     if (visualMesh != null)
-    //     {
-    //         visualMesh.transform.localScale = Vector3.one * pulseScale;
-    //     }
-    // }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

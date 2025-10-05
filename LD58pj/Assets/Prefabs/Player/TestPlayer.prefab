@@ -217,45 +217,45 @@ MonoBehaviour:
   abilityManager: {fileID: 0}
   _movementAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: 5de812fda279e4f448c2fe8a6bf09921, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     walkSpeed: 5
     runSpeed: 8
   _jumpAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: 8d7810fee72ea5f42924cb2a4d4f05c1, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     jumpPower: 20
     coyoteTime: 0.1
     jumpBufferTime: 0.1
   _ironBlockAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: 7f7e19a3a99034df1b4f8979ccf4c296, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     massMultiplier: 3
     gravityMultiplier: 2
   _balloonAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: 992f299a1d0b4c748bb433c519eb93bb, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     glideGravityScale: 0.6
     glideFallSpeed: 2
     glideKey: 32
   _gravityFlipAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: cf65fee4e4d80d142b7f8b1996e57610, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     flipKey: 103
     flipCooldown: 0.5
   _iceBlockAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: f79b5f0fb12bb8442be8169fd2019375, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     frictionReduction: 0.9
     slideSpeedMultiplier: 2
@@ -264,8 +264,8 @@ MonoBehaviour:
     slideParticleRate: 10
   _shrinkAbility:
     abilityName: 
-    icon: {fileID: 0}
-    color: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: eb42b5b7252fd3b409998c14bccc3ffe, type: 2}
+    color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
     shrinkScale: 0.5
     shrinkDuration: 0.3
