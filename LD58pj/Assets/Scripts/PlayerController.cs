@@ -129,6 +129,16 @@ public class PlayerController : MonoSingleton<PlayerController>
         
         // 防止卡在tile缝隙中的优化
         PreventTileGapSticking();
+        
+        UpdateVelocity();
+    }
+
+    void UpdateVelocity()
+    {
+        PlayerAnimatorManager.Instance.ChangeVelocityY(
+            abilityManager.equippedAbilities.Exists(ability => ability == "GravityFlip")
+            ? -rb.velocity.y
+            : rb.velocity.y);
     }
     
     private void InitializeComponents()
