@@ -289,39 +289,6 @@ public class AbilityManager : MonoSingleton<AbilityManager>
         }
     }
     
-    private PlayerAbility GetAbilityData(string abilityTypeId)
-    {
-        return playerAbilities.Find(data => data.AbilityTypeId == abilityTypeId);
-    }
-    
-    // 调试用的快捷键
-    
-    private void CycleAbilityInSlot(int slotIndex)
-    {
-        if (slotIndex >= equippedAbilities.Count) return;
-        
-        string currentAbility = equippedAbilities[slotIndex];
-        string nextAbility = GetNextAbilityTypeId(currentAbility);
-        
-        EquipAbility(nextAbility);
-    }
-    
-    private string GetNextAbilityTypeId(string current)
-    {
-        switch (current)
-        {
-            case "": return "Movement";
-            case "Movement": return "Jump";
-            case "Jump": return "IronBlock";
-            case "IronBlock": return "Balloon";
-            case "Balloon": return "GravityFlip";
-            case "GravityFlip": return "IceBlock";
-            case "IceBlock": return "Shrink";
-            case "Shrink": return "";
-            default: return "Movement";
-        }
-    }
-    
     /// <summary>
     /// 注册PlayerController（由PlayerController调用）
     /// </summary>
@@ -432,7 +399,7 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     /// <summary>
     /// 安全地装备能力（会验证ID有效性）
     /// </summary>
-    public bool SafeEquipAbility(string abilityTypeId, int slotIndex)
+    public bool SafeEquipAbility(string abilityTypeId)
     {
         if (!string.IsNullOrEmpty(abilityTypeId) && !IsValidAbilityId(abilityTypeId))
         {
