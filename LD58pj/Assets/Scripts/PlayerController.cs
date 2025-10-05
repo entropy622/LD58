@@ -120,15 +120,25 @@ public class PlayerController : MonoSingleton<PlayerController>
         // 更新朝向和动画
         UpdateFacing();
         UpdateVisuals();
+        
+        UpdateVelocity();
     }
     
-    void FixedUpdate()
+    void FixedUpdate() 
     {
         // 物理更新AbilityManager指定的能力
         FixedUpdateActiveAbilities();
         
         // 防止卡在tile缝隙中的优化
         PreventTileGapSticking();
+    }
+
+    void UpdateVelocity()
+    {
+        PlayerAnimatorManager.Instance.ChangeVelocityY(
+            abilityManager.equippedAbilities.Exists(ability => ability == "GravityFlip")
+            ? -rb.velocity.y
+            : rb.velocity.y);
     }
     
     private void InitializeComponents()
