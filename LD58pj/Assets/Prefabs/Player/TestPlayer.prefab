@@ -234,9 +234,9 @@ MonoBehaviour:
     abilityName: 
     icon: {fileID: 21300000, guid: 7f7e19a3a99034df1b4f8979ccf4c296, type: 3}
     color: {r: 1, g: 1, b: 1, a: 0}
-    _isEnabled: 1
-    massMultiplier: 3
-    gravityMultiplier: 2
+    _isEnabled: 0
+    massMultiplier: 1
+    gravityMultiplier: 1
   _balloonAbility:
     abilityName: 
     icon: {fileID: 21300000, guid: 992f299a1d0b4c748bb433c519eb93bb, type: 3}
