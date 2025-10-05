@@ -8,7 +8,10 @@ public class UIManeger : MonoBehaviour
     public List<string> abilityPrefabkeyKeys = new List<string> { "Movement", "Jump", "IronBlock", "IceBlock", "GravityFlip", "Dash", "Balloon" };
 
     [Header("能力注册表的value")]
-        public List<GameObject> abilityPrefabValues = new List<GameObject>();
+    public List<GameObject> abilityPrefabValues = new List<GameObject>();
+
+    [Header("槽位父物体")]
+    public List<Transform> abilitySlotParents = new List<Transform>();
 
 
 
@@ -18,10 +21,11 @@ public class UIManeger : MonoBehaviour
     private List<string> lastEquippedAbilities = new List<string>();
     private List<string> lastActiveAbilities = new List<string>();
 
-    private Dictionary<GameObject, Vector2> abilityPositions = new Dictionary<GameObject, Vector2>();
 
+    // 存储每个预制体的父物体
+    private Dictionary<GameObject, Transform> abilityOriginalParents = new Dictionary<GameObject, Transform>();
     // 合成后的注册表
-    public Dictionary<string, GameObject> abilityPrefabRegistry = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> abilityPrefabRegistry = new Dictionary<string, GameObject>();
 
     public static UIManeger Instance { get; private set; }
 
@@ -47,7 +51,8 @@ public class UIManeger : MonoBehaviour
             }
         }
 
-        InitializePositions();
+        // 存储每个预制体的原始父物体
+        storeabilityOriginalParents();
     }
 
     void Start()
@@ -55,44 +60,39 @@ public class UIManeger : MonoBehaviour
         lastActiveAbilities = GetActiveAbilities();
         lastEquippedAbilities = GetEquippedAbilities();
         ShowActiveAbilities();
-        ShowEquippedAbilities();
+        storeabilityOriginalParents();
+
+        // ShowEquippedAbilities();
 
     }
 
     void Update()
     {
+        storeabilityOriginalParents();
         if (activeablitieschanged())
         {
+            Debug.Log("UIManeger检测到activeablitieschanged");
             ShowActiveAbilities();
 
         }
         if (equippedablitieschanged())
         {
-            ShowEquippedAbilities();
+            // ShowEquippedAbilities();
 
         }
     }
 
-    private void InitializePositions()
+
+
+
+    private void storeabilityOriginalParents()
     {
-        // 存储每个 abilityPrefabValues 场景物体的初始位置
+        abilityOriginalParents.Clear();
         foreach (GameObject obj in abilityPrefabValues)
         {
-            if (obj != null && !abilityPositions.ContainsKey(obj))
+            if (obj != null && obj.transform.parent != null)
             {
-                abilityPositions[obj] = obj.transform.position;
-            }
-        }
-    }
-
-    private void ResetPositions()
-    {
-        // 重置每个 abilityPrefabValues 场景物体的位置
-        foreach (var kvp in abilityPositions)
-        {
-            if (kvp.Key != null)
-            {
-                kvp.Key.transform.position = kvp.Value;
+                abilityOriginalParents[obj] = obj.transform.parent;
             }
         }
     }
@@ -101,7 +101,8 @@ public class UIManeger : MonoBehaviour
 
 
 
-    public void ShowEquippedAbilities()
+
+    /*public void ShowEquippedAbilities()
     {
         List<string> equippedAbilities = GetEquippedAbilities();
         // 先隐藏所有 abilityPrefabValues 场景物体
@@ -120,7 +121,7 @@ public class UIManeger : MonoBehaviour
                     obj.SetActive(true);
             }
         }
-    }
+    }*/
 
     public void ShowActiveAbilities()
     {
@@ -173,7 +174,7 @@ public class UIManeger : MonoBehaviour
         }
         return false;
     }
-    
+
     private bool activeablitieschanged()
     {
         List<string> currentActiveAbilities = GetActiveAbilities();
@@ -192,6 +193,8 @@ public class UIManeger : MonoBehaviour
         }
         return false;
     }
+    
+   
 
 
  //public List<string> equippedAbilities = new List<string>(); // 装备的能力列表
