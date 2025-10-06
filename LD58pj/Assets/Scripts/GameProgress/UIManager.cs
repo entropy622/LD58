@@ -166,6 +166,7 @@ public class UIManager : MonoSingleton<UIManager>
         if (resultPanel != null)
             resultPanel.SetActive(false);
         SceneControl.Instance.hasStart = false;
+        Audio.AudioManager.Instance.PlayTitleMusic();
         SceneControl.SwitchSceneWithoutConfirm("MainScene");
     }
 
