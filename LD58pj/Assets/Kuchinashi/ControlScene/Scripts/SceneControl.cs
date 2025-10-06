@@ -10,6 +10,7 @@ namespace Kuchinashi.SceneControl
     public partial class SceneControl : MonoBehaviour
     {
         public GameObject LoadingBg;
+        public bool hasStart;
         
         public static string CurrentScene;
 

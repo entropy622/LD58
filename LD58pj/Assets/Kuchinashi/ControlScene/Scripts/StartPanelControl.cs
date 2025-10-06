@@ -9,8 +9,6 @@ public class StartPanelControl : MonoBehaviour
     private Button mStartButton;
     private Button mExitButton;
     private Button mCreditButton;
-
-    private double lastClickStartButtonTime = -1;
     private void Start()
     {
         mStartButton = transform.Find("StartButton").GetComponent<Button>();
@@ -21,15 +19,19 @@ public class StartPanelControl : MonoBehaviour
 
         mStartButton.onClick.AddListener(() =>
         {
-            // SceneControl.SwitchSceneWithoutConfirm("TestScene");
-            if (Time.timeAsDouble - lastClickStartButtonTime > 1)
+            if (SceneControl.Instance.hasStart)
             {
-                lastClickStartButtonTime = Time.timeAsDouble;
-                SceneControl.SwitchSceneWithoutConfirm("chapter 1");
+                return;
             }
+            SceneControl.Instance.hasStart = true;
+            SceneControl.SwitchSceneWithoutConfirm("chapter 1");
         });
         mExitButton.onClick.AddListener(() =>
         {
+            if (SceneControl.Instance.hasStart)
+            {
+                return;
+            }
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -37,6 +39,10 @@ public class StartPanelControl : MonoBehaviour
 #endif
         });
         mCreditButton.onClick.AddListener(()=>{
+            if (SceneControl.Instance.hasStart)
+            {
+                return;
+            }
             UIManager.Instance.ShowCredits();
         });
         
