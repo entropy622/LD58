@@ -9,6 +9,8 @@ namespace Kuchinashi.SceneControl
 {
     public partial class SceneControl : MonoBehaviour
     {
+        public GameObject LoadingBg;
+        
         public static string CurrentScene;
 
         public static SceneControl Instance;
@@ -188,11 +190,12 @@ namespace Kuchinashi.SceneControl
 
         IEnumerator SwitchSceneCoroutine(string targetScene, Action action = null)
         {
+            IsTransiting = true;
+            LoadingBg.Show();
             TypeEventSystem.Global.Send<OnSceneLoadingStartEvent>();
             yield return Fade(1);
             yield return new WaitForSeconds(1f);
-
-            IsTransiting = true;
+            
             SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
 
             var operation = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
@@ -225,6 +228,7 @@ namespace Kuchinashi.SceneControl
             mProgress.value = 0;
 
             IsTransiting = false;
+            LoadingBg.Hide();
         }
 
         IEnumerator Fade(float targetAlpha)
