@@ -370,6 +370,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontSize
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6783635903973375198, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -452,6 +472,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6872386620766002935, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontSize
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
