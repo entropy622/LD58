@@ -29,13 +29,20 @@ public class Enemy : MonoBehaviour
     private bool isDead = false;
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
-    
+
+    private Vector2 movementDirection;
+    private float movementSpeed;
+
+    //得到testplayer的位置
+
+    [Header("Player")]
+    public GameObject player;
     void Start()
     {
         // 获取组件
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
-        
+
         // 如果没有AudioSource，创建一个
         if (audioSource == null)
         {
@@ -47,20 +54,40 @@ public class Enemy : MonoBehaviour
         {
             audioSource.volume = soundVolume;
         }
-        
+
         // 隐藏AudioSource组件在游戏视图中的显示
         if (audioSource != null)
         {
             audioSource.hideFlags = HideFlags.HideInInspector;
         }
-        
+
         // 确保有碰撞器和Rigidbody2D
         EnsureComponents();
+        
+        //随机设置movementDirection和movementSpeed
+        movementDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        movementSpeed = Random.Range(1f, 3f);
     }
-    
+
     /// <summary>
     /// 确保必要的组件存在
     /// </summary>
+
+    public void Update()
+    {  //有概率改变方向
+        if (Random.Range(0f, 1f) < 0.005f)
+        {
+            movementDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        }
+        Move();
+    }
+
+    private void Move()
+    {
+        // 根据方向和速度移动敌人
+        transform.Translate(movementDirection * movementSpeed * Time.deltaTime);
+    }
+
     private void EnsureComponents()
     {
         // 确保有碰撞器
@@ -69,7 +96,7 @@ public class Enemy : MonoBehaviour
             var collider = gameObject.AddComponent<BoxCollider2D>();
             collider.isTrigger = true; // 设为触发器
         }
-        
+
         // 确保有Rigidbody2D（静态敌人）
         if (GetComponent<Rigidbody2D>() == null)
         {
@@ -77,7 +104,7 @@ public class Enemy : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic; // 静态，不受物理影响
             rb.gravityScale = 0;
         }
-        
+
         // 设置标签
         if (gameObject.tag != "Enemy")
         {
