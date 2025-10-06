@@ -104,7 +104,10 @@ MonoBehaviour:
   destroyDelay: 0.1
   deathEffect: {fileID: 2020537415801632686, guid: 6f4f21b41f537a741adeb07522764c6e, type: 3}
   deathParticles: {fileID: 0}
-  deathSound: {fileID: 0}
+  deathSounds:
+  - {fileID: 8300000, guid: 9a29bc474041b9f43936396c9a4a4ddf, type: 3}
+  - {fileID: 8300000, guid: a33a82de343af4b44a1d878e63fc68bd, type: 3}
+  soundVolume: 0.7
   particleColor: {r: 1, g: 0, b: 0, a: 1}
   particleCount: 20
   particleLifetime: 1
