@@ -214,6 +214,10 @@ PrefabInstance:
       propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2272626756177061116, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3130069187809776232, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -680,9 +684,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedAbilities:
-  - Balloon
-  - Movement
   - Jump
+  - Movement
+  - 
   - 
   - 
   - 
