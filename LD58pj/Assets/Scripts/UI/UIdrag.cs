@@ -7,10 +7,13 @@ using UnityEngine.EventSystems;
 
 public class UIdrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    Vector2 defaultpos;
+    public Transform originalParent;
+    private Vector2 defaultpos;
 
     public void OnPointerDown(PointerEventData eventData)
+    
     {
+        originalParent = transform.parent;
         var canvasTransform = GetComponentInParent<Canvas>().transform;
         transform.SetParent(canvasTransform, true);
         transform.SetAsLastSibling();
@@ -54,12 +57,15 @@ public class UIdrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointer
             if (checkcollision(slot))
             {
                 //记录当前物体的父物体
-                Transform originalParent = transform.parent;
+                
+                Debug.Log("原始父物体是" + originalParent.name);
+
+                //记录当前物体的位置
+
                 //如果槽位中已经有物体了，就交换位置
                 if (slot.childCount > 0)
                 {
                     Transform other = slot.GetChild(0);
-                    Transform otherOriginalParent = other.parent;
                     other.SetParent(originalParent, true);
                     other.position = originalParent.position;
                     transform.SetParent(slot, true);
