@@ -198,6 +198,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1496095186452498778, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 165a4eff0602e1a488bb82130bfe5e42, type: 3}
     - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_fontAsset
       value: 
@@ -210,6 +214,30 @@ PrefabInstance:
       propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3130069187809776232, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d9e0438197f61c142b91f32b18451959, type: 3}
+    - target: {fileID: 3542268248406331722, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 3542268248406331722, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 3542268248406331722, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3542268248406331722, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5965885043914369851, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d9e0438197f61c142b91f32b18451959, type: 3}
     - target: {fileID: 6237409079000763808, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: abilityPrefabkeyKeys.Array.data[2]
       value: DoubleJump
@@ -318,6 +346,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoubleJump
       objectReference: {fileID: 0}
+    - target: {fileID: 7958822758365521921, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d9e0438197f61c142b91f32b18451959, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15362,7 +15394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41600cc8b55d7714abf79805ea0dcc0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTimeLimit: 60
+  gameTimeLimit: 120
   timerText: {fileID: 557133725}
   normalTimeColor: {r: 0.8678932, g: 0.9529412, b: 0.1882353, a: 1}
   warningTimeColor: {r: 1, g: 0.3227331, b: 0, a: 1}
