@@ -352,7 +352,7 @@ MonoBehaviour:
   titleClip: {fileID: 8300000, guid: b770253658ce675489b79f780b47cf34, type: 3}
   creditClip: {fileID: 8300000, guid: dada5d0090c88b04a9b55e00df758632, type: 3}
   musicVolume: 1.5
-  fadeDuration: 1
+  fadeDuration: 0.5
 --- !u!4 &324875695
 Transform:
   m_ObjectHideFlags: 0
@@ -650,6 +650,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2175061771225307410, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175061771225307410, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175061771225307410, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -700,6 +708,10 @@ PrefabInstance:
     - target: {fileID: 6718184666694481574, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
       propertyPath: m_Name
       value: CreditsPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6718184666694481574, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
