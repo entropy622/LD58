@@ -157,7 +157,8 @@ public class UIManager : MonoSingleton<UIManager>
         Time.timeScale = 1f;
         if (resultPanel != null)
             resultPanel.SetActive(false);
-        SceneControl.SwitchSceneWithoutConfirm("chapter 1");
+        AbilityManager.Instance.Init();
+        SpawnManager.Instance.Init();
     }
 
     private void OnBackToTitleClicked()
