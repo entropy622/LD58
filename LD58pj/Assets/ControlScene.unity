@@ -712,7 +712,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Score:0
+  m_text: 'Score:
+
+    0/1200'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
   m_sharedMaterial: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
@@ -775,7 +777,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -26.946304, y: 0, z: -128.11417, w: 0}
+  m_margin: {x: -32.12027, y: -25.869751, z: -128.11417, w: -40.96048}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
