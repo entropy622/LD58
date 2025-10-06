@@ -275,6 +275,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7294503814443938604, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: cd3cd5868ac8bce4c9f79ddc3534a9a0, type: 3}
     - target: {fileID: 7526864720248016228, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_Name
       value: DoubleJump
