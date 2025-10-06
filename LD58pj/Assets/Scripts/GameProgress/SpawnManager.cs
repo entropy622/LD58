@@ -171,6 +171,13 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
         // 触发时间结束事件
         OnTimeUp?.Invoke();
+        // 结束游戏
+        EndGame();
+        // 调用结果面板
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowResultPanel(currentScore);
+        }
     }
 
     // ==================== 新增：计时器公共API ====================
