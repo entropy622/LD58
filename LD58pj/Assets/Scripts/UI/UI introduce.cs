@@ -25,7 +25,7 @@ public class UIintroduce : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         textObj.transform.SetParent(transform);
         textObj.transform.localPosition = new Vector3(0, -50, 0);
         TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
-        text.text = "drag to change the order of abilities" + "\n" + gettext();
+        text.text = gettext();
         text.fontSize = 24;
         text.alignment = TextAlignmentOptions.Center;
         //设置成白色
@@ -62,7 +62,7 @@ public class UIintroduce : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             case "Dash":
                 return "Dash: Quickly dash in the direction you are facing";
             case "Balloon":
-                return "Balloon: Create a balloon to slow your fall";
+                return "Balloon: Press Space to create a balloon to slow your fall";
             case "DoubleJump":
                 return "DoubleJump: Jump again while in the air";    
             default:
