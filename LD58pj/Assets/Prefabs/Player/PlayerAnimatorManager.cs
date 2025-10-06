@@ -75,7 +75,7 @@ public class PlayerAnimatorManager : MonoSingleton<PlayerAnimatorManager>
     }
     public void ChangeJumpState(bool state)
     {
-        playerAnimator.SetBool(Jump,state);
+        // playerAnimator.SetBool(Jump,state);
     }
     public void ChangePickState(bool state)
     {
