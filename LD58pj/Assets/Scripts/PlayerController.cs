@@ -29,8 +29,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     [Space(5)]
     [SerializeField] private JumpAbility _jumpAbility = new JumpAbility();
     [Space(5)]
-    [SerializeField] private IronBlockAbility _ironBlockAbility = new IronBlockAbility();
-    [Space(5)]
     [SerializeField] private BalloonAbility _balloonAbility = new BalloonAbility();
     [Space(5)]
     [SerializeField] private GravityFlipAbility _gravityFlipAbility = new GravityFlipAbility();
@@ -48,7 +46,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     // 公开访问器供 Editor 使用
     public MovementAbility movementAbility => _movementAbility;
     public JumpAbility jumpAbility => _jumpAbility;
-    public IronBlockAbility ironBlockAbility => _ironBlockAbility;
     public BalloonAbility balloonAbility => _balloonAbility;
     public GravityFlipAbility gravityFlipAbility => _gravityFlipAbility;
     public IceBlockAbility iceBlockAbility => _iceBlockAbility;
@@ -56,7 +53,6 @@ public class PlayerController : MonoSingleton<PlayerController>
     public DoubleJumpAbility doubleJumpAbility => _doubleJumpAbility;
     
     public DashAbility dashAbility => _dashAbility;
-    // public BouncyBallAbility bouncyBallAbility => _bouncyBallAbility;
 
     // 组件引用
     private Rigidbody2D rb;
@@ -205,26 +201,20 @@ public class PlayerController : MonoSingleton<PlayerController>
         // 初始化所有能力实例
         _movementAbility.Initialize(this);
         _jumpAbility.Initialize(this);
-        // _ironBlockAbility.Initialize(this);
         _balloonAbility.Initialize(this);
         _gravityFlipAbility.Initialize(this);
         _iceBlockAbility.Initialize(this);
-        // _shrinkAbility.Initialize(this);
         _doubleJumpAbility.Initialize(this);
-        // _bouncyBallAbility.Initialize(this);
         _dashAbility.Initialize(this);
 
         // 注册能力到字典中
         RegisterAbility(_movementAbility);
         RegisterAbility(_jumpAbility);
-        // RegisterAbility(_ironBlockAbility);
         RegisterAbility(_balloonAbility);
         RegisterAbility(_gravityFlipAbility);
         RegisterAbility(_iceBlockAbility);
-        // RegisterAbility(_shrinkAbility);
         RegisterAbility(_doubleJumpAbility);
         RegisterAbility(_dashAbility);
-        // RegisterAbility(_bouncyBallAbility);
     }
     
     /// <summary>

@@ -56,7 +56,6 @@ public class PlayerControllerEditor : Editor
         // 能力开关控制
         DrawAbilitySection("😶 移动能力", movementAbilityProp, controller.movementAbility);
         DrawAbilitySection("🦘 跳跃能力", jumpAbilityProp, controller.jumpAbility);
-        DrawAbilitySection("🧱 铁块能力", ironBlockAbilityProp, controller.ironBlockAbility);
         DrawAbilitySection("🎈 气球能力", balloonAbilityProp, controller.balloonAbility);
         DrawAbilitySection("👻 翻转能力", gravityFlipAbilityProp, controller.gravityFlipAbility);
         DrawAbilitySection("氷 冰块能力", iceBlockAbilityProp, controller.iceBlockAbility);
@@ -94,7 +93,6 @@ public class PlayerControllerEditor : Editor
         // 强制重新初始化所有能力
         controller.movementAbility?.Initialize(controller);
         controller.jumpAbility?.Initialize(controller);
-        controller.ironBlockAbility?.Initialize(controller);
         controller.balloonAbility?.Initialize(controller);
         controller.gravityFlipAbility?.Initialize(controller);
         controller.iceBlockAbility?.Initialize(controller);

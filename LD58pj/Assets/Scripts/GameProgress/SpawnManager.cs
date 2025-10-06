@@ -629,7 +629,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         SpawnAbilityCrystal();
         
         // 可选：增加敌人生成速度
-        enemySpawnInterval = Mathf.Max(1f, enemySpawnInterval * spawnEnemyAccelerate);
+        enemySpawnInterval = Mathf.Max(0.2f, enemySpawnInterval * spawnEnemyAccelerate);
         
         Debug.Log($"[GameProgressManager] 升级到等级 {currentLevel}！");
     }
