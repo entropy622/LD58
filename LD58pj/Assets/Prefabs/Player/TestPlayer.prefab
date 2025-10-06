@@ -227,7 +227,7 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 8d7810fee72ea5f42924cb2a4d4f05c1, type: 3}
     color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
-    jumpPower: 20
+    jumpPower: 25
     coyoteTime: 0.1
     jumpBufferTime: 0.1
   _ironBlockAbility:
@@ -242,7 +242,7 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 992f299a1d0b4c748bb433c519eb93bb, type: 3}
     color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
-    glideGravityScale: 0.6
+    glideGravityScale: 0.7
     glideFallSpeed: 2
     glideKey: 32
   _gravityFlipAbility:
@@ -268,7 +268,7 @@ MonoBehaviour:
     color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
     firstJumpPower: 10
-    secondJumpPower: 10
+    secondJumpPower: 25
     coyoteTime: 0.1
     jumpBufferTime: 0.1
     jumpCooldown: 0.1
@@ -277,6 +277,12 @@ MonoBehaviour:
     enableDoubleJumpMomentum: 1
     enableDoubleJumpEffect: 1
     doubleJumpEffectColor: {r: 0, g: 1, b: 1, a: 1}
+  _dashAbility:
+    abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    _isEnabled: 1
+    dashForce: 10
 --- !u!1 &1769518366039675302
 GameObject:
   m_ObjectHideFlags: 0
