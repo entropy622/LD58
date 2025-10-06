@@ -147,7 +147,7 @@ public class UIManager : MonoSingleton<UIManager>
         {
             resultPanel.SetActive(true);
             if (resultScoreText != null)
-                resultScoreText.text = $"Score: {score}";
+                resultScoreText.text = $"Score: {score}/1500";
             Time.timeScale = 0f; // 暂停游戏
         }
     }

@@ -121,6 +121,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     private void InitializeTimer()
     {
         timerTime = gameTimeLimit;
+        isTimerRunning = true;
         UpdateTimerDisplay();
 
         // 如果没有设置timerText，尝试自动查找
@@ -357,7 +358,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     private void UpdateUI()
     {
         if (scoreText != null)
-            scoreText.text = $"Score: {currentScore}";
+            scoreText.text = $"Score:\n{currentScore}/1500";
             
         if (timeText != null)
         {

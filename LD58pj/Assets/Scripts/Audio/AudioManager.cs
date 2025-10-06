@@ -47,6 +47,7 @@ namespace Audio
                 musicSource.volume = musicVolume;
                 musicSource.loop = true;
             }
+            PlayTitleMusic();
         }
         
         /// <summary>
