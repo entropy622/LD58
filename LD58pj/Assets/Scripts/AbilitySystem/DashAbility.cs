@@ -69,7 +69,7 @@ public class DashAbility : PlayerAbility
         if (!isEnabled) return;
         GameObject player = playerController.gameObject;
         // 在这里添加冲刺逻辑，例如应用一个瞬时的速度变化
-        player.GetComponent<Rigidbody2D>().AddForce(direction.normalized * dashForce * 5, ForceMode2D.Impulse);
+        player.GetComponent<Rigidbody2D>().AddForce(direction.normalized * dashForce * 3, ForceMode2D.Impulse);
 
         // 执行冲刺动作的逻辑
     }

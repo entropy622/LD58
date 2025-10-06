@@ -80,6 +80,15 @@ public class Enemy : MonoBehaviour
             movementDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
         }
         Move();
+        //检测运动方向
+        if (movementDirection.x < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1); // 朝左
+        }
+        else if (movementDirection.x > 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1);  // 朝右
+        }
     }
 
     private void Move()
