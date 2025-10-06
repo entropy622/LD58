@@ -34,6 +34,16 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     {
         SetupDefaultAbilitiesCoroutine();
         Debug.Log("abilities count: " + _abilityRegistry.Count);
+        StartCoroutine(RemoveDashCoroutine());
+    }
+
+    private IEnumerator RemoveDashCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (activeAbilities.Contains("Dash"))
+        {
+            activeAbilities.Remove("Dash");
+        }
     }
     
     private void SetupDefaultAbilitiesCoroutine()

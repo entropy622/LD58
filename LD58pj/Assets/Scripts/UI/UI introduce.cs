@@ -50,9 +50,9 @@ public class UIintroduce : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         switch (name)
         {
             case "Movement":
-                return "Movement: Move left and right";
+                return "Movement: A basic ability: Move left and right";
             case "Jump":
-                return "Jump: Jump up";
+                return "Jump: A basic ability: Jump up";
             case "IronBlock":
                 return "IronBlock: ??";
             case "IceBlock":
