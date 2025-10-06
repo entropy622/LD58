@@ -16,7 +16,7 @@ namespace Audio
         public float musicVolume = 1f;    // 音乐音量
         
         [Range(0f, 1f)]
-        public float fadeDuration = 1.0f;   // 音乐淡入淡出时间
+        public float fadeDuration = 0.5f;   // 音乐淡入淡出时间
         
         private AudioSource musicSource;    // 音乐音频源
         private Coroutine fadeCoroutine;    // 淡入淡出协程

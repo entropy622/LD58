@@ -352,7 +352,7 @@ MonoBehaviour:
   titleClip: {fileID: 8300000, guid: b770253658ce675489b79f780b47cf34, type: 3}
   creditClip: {fileID: 8300000, guid: dada5d0090c88b04a9b55e00df758632, type: 3}
   musicVolume: 1.5
-  fadeDuration: 1
+  fadeDuration: 0.5
 --- !u!4 &324875695
 Transform:
   m_ObjectHideFlags: 0
