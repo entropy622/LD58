@@ -122,6 +122,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &191140640 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+  m_PrefabInstance: {fileID: 282003516}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &230433416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -187,6 +198,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6237409079000763808, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: abilityPrefabkeyKeys.Array.data[2]
       value: DoubleJump
@@ -273,6 +296,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6872386620766002935, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+    - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7294503814443938604, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
@@ -495,6 +530,17 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &557133725 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+  m_PrefabInstance: {fileID: 282003516}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1116403353 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 84331712922605226, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
@@ -15317,7 +15363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameTimeLimit: 60
-  timerText: {fileID: 0}
+  timerText: {fileID: 557133725}
   normalTimeColor: {r: 0.8678932, g: 0.9529412, b: 0.1882353, a: 1}
   warningTimeColor: {r: 1, g: 0.3227331, b: 0, a: 1}
   warningThreshold: 10
@@ -15337,7 +15383,7 @@ MonoBehaviour:
   avoidGroundTiles: 1
   abilityCrystalPrefab: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
   crystalSpawnDelay: 1
-  scoreText: {fileID: 0}
+  scoreText: {fileID: 191140640}
   timeText: {fileID: 0}
   levelText: {fileID: 0}
   enemiesKilledText: {fileID: 0}
