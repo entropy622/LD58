@@ -348,9 +348,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01d8890aa17cdd34ea338367287540ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioContainer: {fileID: 0}
-  IsContainerReady: 0
-  defaultVol: 0.8
+  bgmClip: {fileID: 8300000, guid: 0061707bb7e1ec340a1bf0f06c038d0e, type: 3}
+  titleClip: {fileID: 8300000, guid: b770253658ce675489b79f780b47cf34, type: 3}
+  creditClip: {fileID: 8300000, guid: dada5d0090c88b04a9b55e00df758632, type: 3}
+  musicVolume: 1
+  fadeDuration: 1
 --- !u!4 &324875695
 Transform:
   m_ObjectHideFlags: 0

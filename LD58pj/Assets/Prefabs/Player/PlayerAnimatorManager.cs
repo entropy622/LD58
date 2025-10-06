@@ -36,11 +36,6 @@ public class PlayerAnimatorManager : MonoSingleton<PlayerAnimatorManager>
         }
     }
 
-    public void PlayFootStepSound()
-    {
-        GameAudio.AudioManager.Instance.PlayFootsteps();
-    }
-
     public void Init()
     {
         playerAnimator.CrossFade("Idle",0);
