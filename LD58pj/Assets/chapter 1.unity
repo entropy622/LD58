@@ -21075,14 +21075,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 337464454573008586, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: m_Mass
-      value: 0.5141899
-      objectReference: {fileID: 0}
-    - target: {fileID: 337464454573008586, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
-      propertyPath: m_UseAutoMass
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1586904685604853981, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
       propertyPath: m_Name
       value: TestPlayer
@@ -21183,6 +21175,10 @@ PrefabInstance:
     - target: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
       propertyPath: m_Name
       value: AbilityCrystal
+      objectReference: {fileID: 0}
+    - target: {fileID: 6263336853549479528, guid: 02a2bee33e76e2c43b09feef479ad219, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
