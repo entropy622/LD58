@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QFramework;
 using TMPro;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// 游戏进度管理器 - 管理敌人生成、水晶生成和分数系统
@@ -33,6 +34,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public GameObject enemyPrefab;
     public int maxEnemies = 10; // 最大敌人数量
     public float enemySpawnInterval = 2f; // 敌人生成间隔
+    public float spawnEnemyAccelerate = 0.9f;
     public Vector2 spawnAreaMin = new Vector2(-8f, -4f); // 生成区域最小坐标
     public Vector2 spawnAreaMax = new Vector2(8f, 4f); // 生成区域最大坐标
     public float minDistanceFromPlayer = 3f; // 距离玩家的最小距离
@@ -318,7 +320,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     private void UpdateUI()
     {
         if (scoreText != null)
-            scoreText.text = $"分数: {currentScore}";
+            scoreText.text = $"Score: {currentScore}";
             
         if (timeText != null)
         {
@@ -571,6 +573,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             obtainedAbilities.Add(e.abilityTypeId);
             
             Debug.Log($"[GameProgressManager] 收集到能力: {e.abilityTypeId}");
+            
+            currentScore += 20;
         }
     }
     
@@ -591,7 +595,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         SpawnAbilityCrystal();
         
         // 可选：增加敌人生成速度
-        enemySpawnInterval = Mathf.Max(1f, enemySpawnInterval * 0.9f);
+        enemySpawnInterval = Mathf.Max(1f, enemySpawnInterval * spawnEnemyAccelerate);
         
         Debug.Log($"[GameProgressManager] 升级到等级 {currentLevel}！");
     }
