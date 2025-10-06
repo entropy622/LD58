@@ -136,6 +136,12 @@ public class PlayerController : MonoSingleton<PlayerController>
         
         // 防止卡在tile缝隙中的优化
         PreventTileGapSticking();
+        
+        // 防止高速移动时穿墙
+        PreventHighSpeedWallPenetration();
+        
+        // 连续碰撞检测
+        ContinuousCollisionDetection();
     }
 
     void UpdateVelocity()
@@ -307,6 +313,143 @@ public class PlayerController : MonoSingleton<PlayerController>
             // 有输入但速度很小，可能卡住了
             Vector2 pushDirection = new Vector2(Mathf.Sign(horizontalInput), 0.2f);
             rb.AddForce(pushDirection * 3f, ForceMode2D.Force);
+        }
+    }
+    
+    /// <summary>
+    /// 防止高速移动时穿墙 - 平滑处理版本
+    /// </summary>
+    private void PreventHighSpeedWallPenetration()
+    {
+        Vector2 velocity = rb.velocity;
+        float speed = velocity.magnitude;
+        
+        // 只在高速时检测（水平或垂直速度超过阈值）
+        if (speed < 8f) return;
+        
+        // 分别检测水平和垂直方向
+        CheckHorizontalPenetration(velocity);
+        CheckVerticalPenetration(velocity);
+    }
+    
+    /// <summary>
+    /// 检测水平方向穿透
+    /// </summary>
+    private void CheckHorizontalPenetration(Vector2 velocity)
+    {
+        if (Mathf.Abs(velocity.x) < 5f) return;
+        
+        float horizontalDirection = Mathf.Sign(velocity.x);
+        Vector2 rayOrigin = boxCollider.bounds.center;
+        Vector2 rayDirection = horizontalDirection > 0 ? Vector2.right : Vector2.left;
+        float checkDistance = boxCollider.bounds.extents.x + 0.1f;
+        
+        // 使用多点检测
+        for (int i = -1; i <= 1; i++)
+        {
+            Vector2 rayPos = rayOrigin + Vector2.up * (boxCollider.bounds.extents.y * 0.5f * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayPos, rayDirection, checkDistance, groundLayer);
+            
+            if (hit.collider != null && hit.collider != boxCollider)
+            {
+                // 检测到墙壁，平滑减速而不是反弹
+                float penetrationDepth = checkDistance - hit.distance;
+                if (penetrationDepth > 0.01f)
+                {
+                    // 逐渐减少水平速度
+                    Vector2 currentVelocity = rb.velocity;
+                    currentVelocity.x *= 0.7f; // 减少水平速度
+                    rb.velocity = currentVelocity;
+                    
+                    // 如果穿透较深，稍微调整位置
+                    if (penetrationDepth > 0.1f)
+                    {
+                        Vector2 adjustment = rayDirection * (-penetrationDepth * 0.5f);
+                        transform.position += new Vector3(adjustment.x, adjustment.y, 0);
+                    }
+                    
+                    Debug.Log($"[PlayerController] 水平方向防穿透，调整速度: {rb.velocity}");
+                    return;
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 检测垂直方向穿透
+    /// </summary>
+    private void CheckVerticalPenetration(Vector2 velocity)
+    {
+        if (Mathf.Abs(velocity.y) < 5f) return;
+        
+        float verticalDirection = Mathf.Sign(velocity.y);
+        Vector2 rayOrigin = boxCollider.bounds.center;
+        Vector2 rayDirection = verticalDirection > 0 ? Vector2.up : Vector2.down;
+        float checkDistance = boxCollider.bounds.extents.y + 0.1f;
+        
+        // 使用多点检测
+        for (int i = -1; i <= 1; i++)
+        {
+            Vector2 rayPos = rayOrigin + Vector2.right * (boxCollider.bounds.extents.x * 0.5f * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayPos, rayDirection, checkDistance, groundLayer);
+            
+            if (hit.collider != null && hit.collider != boxCollider)
+            {
+                // 检测到天花板或地面，平滑减速
+                float penetrationDepth = checkDistance - hit.distance;
+                if (penetrationDepth > 0.01f)
+                {
+                    // 逐渐减少垂直速度
+                    Vector2 currentVelocity = rb.velocity;
+                    currentVelocity.y *= 0.7f; // 减少垂直速度
+                    rb.velocity = currentVelocity;
+                    
+                    // 如果穿透较深，稍微调整位置
+                    if (penetrationDepth > 0.1f)
+                    {
+                        Vector2 adjustment = rayDirection * (-penetrationDepth * 0.5f);
+                        transform.position += new Vector3(adjustment.x, adjustment.y, 0);
+                    }
+                    
+                    Debug.Log($"[PlayerController] 垂直方向防穿透，调整速度: {rb.velocity}");
+                    return;
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 连续碰撞检测，防止高速移动穿透
+    /// </summary>
+    private void ContinuousCollisionDetection()
+    {
+        Vector2 velocity = rb.velocity;
+        float speed = velocity.magnitude;
+        
+        // 只在足够高速时启用
+        if (speed < 10f) return;
+        
+        // 预测下一帧的位置
+        Vector2 nextPosition = rb.position + velocity * Time.fixedDeltaTime;
+        Vector2 direction = velocity.normalized;
+        
+        // 检查预测路径上的碰撞
+        RaycastHit2D hit = Physics2D.CircleCast(
+            rb.position, 
+            Mathf.Min(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y) * 0.8f, 
+            direction, 
+            speed * Time.fixedDeltaTime * 1.2f, 
+            groundLayer
+        );
+        
+        if (hit.collider != null && hit.collider != boxCollider)
+        {
+            // 如果预测会碰撞，平滑减速
+            Vector2 currentVelocity = rb.velocity;
+            currentVelocity *= 0.8f; // 平滑减速
+            rb.velocity = currentVelocity;
+            
+            Debug.Log($"[PlayerController] 连续碰撞检测触发，调整速度: {rb.velocity}");
         }
     }
     #endregion
