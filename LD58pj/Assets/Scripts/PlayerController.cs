@@ -42,6 +42,8 @@ public class PlayerController : MonoSingleton<PlayerController>
     [SerializeField] private DoubleJumpAbility _doubleJumpAbility = new DoubleJumpAbility();
     // [Space(5)]
     // [SerializeField] private BouncyBallAbility _bouncyBallAbility = new BouncyBallAbility();
+    [Space(5)]
+    [SerializeField] private DashAbility _dashAbility = new DashAbility();
     
     // 公开访问器供 Editor 使用
     public MovementAbility movementAbility => _movementAbility;
@@ -52,8 +54,10 @@ public class PlayerController : MonoSingleton<PlayerController>
     public IceBlockAbility iceBlockAbility => _iceBlockAbility;
     // public ShrinkAbility shrinkAbility => _shrinkAbility;
     public DoubleJumpAbility doubleJumpAbility => _doubleJumpAbility;
-    // public BouncyBallAbility bouncyBallAbility => _bouncyBallAbility;
     
+    public DashAbility dashAbility => _dashAbility;
+    // public BouncyBallAbility bouncyBallAbility => _bouncyBallAbility;
+
     // 组件引用
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
@@ -195,7 +199,7 @@ public class PlayerController : MonoSingleton<PlayerController>
             }
         }
     }
-    
+
     private void InitializeAbilities()
     {
         // 初始化所有能力实例
@@ -208,7 +212,8 @@ public class PlayerController : MonoSingleton<PlayerController>
         // _shrinkAbility.Initialize(this);
         _doubleJumpAbility.Initialize(this);
         // _bouncyBallAbility.Initialize(this);
-        
+        _dashAbility.Initialize(this);
+
         // 注册能力到字典中
         RegisterAbility(_movementAbility);
         RegisterAbility(_jumpAbility);
@@ -218,6 +223,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         RegisterAbility(_iceBlockAbility);
         // RegisterAbility(_shrinkAbility);
         RegisterAbility(_doubleJumpAbility);
+        RegisterAbility(_dashAbility);
         // RegisterAbility(_bouncyBallAbility);
     }
     

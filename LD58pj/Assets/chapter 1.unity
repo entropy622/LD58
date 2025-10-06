@@ -479,7 +479,7 @@ PrefabInstance:
     - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_fontSizeBase
       value: 48
@@ -487,10 +487,14 @@ PrefabInstance:
     - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 1795446326181979114, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6237409079000763808, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: abilityPrefabkeyKeys.Array.data[2]
+      value: DoubleJump
       objectReference: {fileID: 0}
     - target: {fileID: 6783635903973375198, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_Name
@@ -583,7 +587,7 @@ PrefabInstance:
     - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_fontSizeBase
       value: 48
@@ -591,10 +595,14 @@ PrefabInstance:
     - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 9131246651002301266, guid: 87f43c2820b745c499b149389eb0735e, type: 2}
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 6989640057446120632, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7526864720248016228, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
+      propertyPath: m_Name
+      value: DoubleJump
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -707,7 +715,8 @@ MonoBehaviour:
   - 
   - 
   - 
-  activeAbilities: []
+  activeAbilities:
+  - 
 --- !u!1 &1453214460
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,10 +11,13 @@ public class PlayerControllerEditor : Editor
     private SerializedProperty balloonAbilityProp;
     private SerializedProperty gravityFlipAbilityProp;
     private SerializedProperty iceBlockAbilityProp;
+
+    private SerializedProperty dashAbilityProp;
+    // private SerializedProperty shrinkAbilityProp;
     
     // 缓存上一次的参数值，用于检测变化
     private bool hasChanged = false;
-    
+
     void OnEnable()
     {
         controller = (PlayerController)target;
@@ -22,8 +25,10 @@ public class PlayerControllerEditor : Editor
         jumpAbilityProp = serializedObject.FindProperty("_jumpAbility");
         ironBlockAbilityProp = serializedObject.FindProperty("_ironBlockAbility");
         balloonAbilityProp = serializedObject.FindProperty("_balloonAbility");
-        gravityFlipAbilityProp = serializedObject.FindProperty("_gravityFlipAbility");  
+        gravityFlipAbilityProp = serializedObject.FindProperty("_gravityFlipAbility");
         iceBlockAbilityProp = serializedObject.FindProperty("_iceBlockAbility");
+        dashAbilityProp = serializedObject.FindProperty("_dashAbility");
+        // shrinkAbilityProp = serializedObject.FindProperty("_shrinkAbility");
     }
     
     public override void OnInspectorGUI()
@@ -55,8 +60,9 @@ public class PlayerControllerEditor : Editor
         DrawAbilitySection("🎈 气球能力", balloonAbilityProp, controller.balloonAbility);
         DrawAbilitySection("👻 翻转能力", gravityFlipAbilityProp, controller.gravityFlipAbility);
         DrawAbilitySection("氷 冰块能力", iceBlockAbilityProp, controller.iceBlockAbility);
+        DrawAbilitySection("Dash 闪现能力", dashAbilityProp, controller.dashAbility);
         // DrawAbilitySection("縮 小能力", shrinkAbilityProp, controller.shrinkAbility);
-        
+
         // 检测是否有变化
         if (EditorGUI.EndChangeCheck())
         {
@@ -92,6 +98,8 @@ public class PlayerControllerEditor : Editor
         controller.balloonAbility?.Initialize(controller);
         controller.gravityFlipAbility?.Initialize(controller);
         controller.iceBlockAbility?.Initialize(controller);
+        controller.dashAbility?.Initialize(controller);
+        // controller.shrinkAbility?.Initialize(controller);
         
         // 同步AbilityManager的状态
         var abilityManager = controller.GetAbilityManager();

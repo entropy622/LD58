@@ -58,11 +58,13 @@ public class UIintroduce : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             case "IceBlock":
                 return "IceBlock: Increase your speed";
             case "GravityFlip":
-                return "GravityFlip: Flip gravity to walk on the ceiling";
+                return "GravityFlip:press G to Flip gravity to walk on the ceiling";
             case "Dash":
                 return "Dash: Quickly dash in the direction you are facing";
             case "Balloon":
                 return "Balloon: Create a balloon to slow your fall";
+            case "DoubleJump":
+                return "DoubleJump: Jump again while in the air";    
             default:
                 return "";
         }
