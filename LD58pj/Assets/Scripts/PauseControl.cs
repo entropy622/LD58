@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kuchinashi.SceneControl;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,9 +16,11 @@ public class PauseControl : MonoBehaviour
         mReset.onClick.AddListener(() =>
         {
             try{
-            TypeEventSystem.Global.Send<OnPlayerDiedEvents>(new OnPlayerDiedEvents(true));
-            Time.timeScale = 1;
-            gameObject.SetActive(false);
+                AbilityManager.Instance.Init();
+                SpawnManager.Instance.Init();
+                TypeEventSystem.Global.Send<OnPlayerDiedEvents>(new OnPlayerDiedEvents(true));
+                Time.timeScale = 1;
+                gameObject.SetActive(false);
             }catch(Exception){
                 
             }

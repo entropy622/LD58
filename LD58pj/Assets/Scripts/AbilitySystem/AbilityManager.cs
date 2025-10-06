@@ -32,6 +32,13 @@ public class AbilityManager : MonoSingleton<AbilityManager>
     
     void Start()
     {
+        Init();
+    }
+    
+    public void Init()
+    {
+        activeAbilities = new List<string>();
+        equippedAbilities = new List<string>();
         SetupDefaultAbilitiesCoroutine();
         Debug.Log("abilities count: " + _abilityRegistry.Count);
         StartCoroutine(RemoveDashCoroutine());

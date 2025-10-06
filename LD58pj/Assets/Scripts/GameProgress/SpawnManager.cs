@@ -18,6 +18,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public Color warningTimeColor = Color.red;
     public float warningThreshold = 10f; // 警告阈值（最后10秒）
 
+    public GameObject SpawnParent;
+    
     private float timerTime;
     private bool isTimerRunning = true;
 
@@ -83,9 +85,37 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     
     void Start()
     {
+        Init();
+    }
+
+    public void Init()
+    {
         InitializeGame();
         InitializeTimer(); // 初始化计时器
+        ClearSpawnParent();
     }
+    
+        
+    /// <summary>
+    /// 清除SpawnParent的所有子物体
+    /// </summary>
+    private void ClearSpawnParent()
+    {
+        if (SpawnParent != null)
+        {
+            // 遍历并销毁所有子物体
+            for (int i = SpawnParent.transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(SpawnParent.transform.GetChild(i).gameObject);
+            }
+            Debug.Log("[SpawnManager] 已清除SpawnParent的所有子物体");
+        }
+        else
+        {
+            Debug.LogWarning("[SpawnManager] SpawnParent未设置，无法清除子物体");
+        }
+    }
+    
 
     // ==================== 新增：计时器初始化 ====================
     private void InitializeTimer()
@@ -391,7 +421,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         
         Vector2 spawnPosition = GetValidSpawnPosition();
         
-        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity,SpawnParent.transform);
         
         // 确保敌人有Enemy组件
         if (enemy.GetComponent<Enemy>() == null)
@@ -526,7 +556,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         Vector2 spawnPosition = GetValidSpawnPosition();
         
         // 生成水晶
-        GameObject crystal = Instantiate(abilityCrystalPrefab, spawnPosition, Quaternion.identity);
+        GameObject crystal = Instantiate(abilityCrystalPrefab, spawnPosition, Quaternion.identity,SpawnParent.transform);
         
         // 设置水晶的能力类型
         AbilityCrystal crystalComponent = crystal.GetComponent<AbilityCrystal>();
