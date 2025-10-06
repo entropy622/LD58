@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &51243865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,7 +351,7 @@ MonoBehaviour:
   bgmClip: {fileID: 8300000, guid: 0061707bb7e1ec340a1bf0f06c038d0e, type: 3}
   titleClip: {fileID: 8300000, guid: b770253658ce675489b79f780b47cf34, type: 3}
   creditClip: {fileID: 8300000, guid: dada5d0090c88b04a9b55e00df758632, type: 3}
-  musicVolume: 1
+  musicVolume: 1.5
   fadeDuration: 1
 --- !u!4 &324875695
 Transform:
@@ -617,10 +617,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 51243868}
     m_Modifications:
-    - target: {fileID: 1086979647474565315, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_Color.a
-      value: 0.9490196
-      objectReference: {fileID: 0}
     - target: {fileID: 2175061771225307410, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -701,61 +697,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2702287692047020222, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_text
-      value: "\\nCredit\n\r\n- Programming: the_iaald, Aentro, Obi_w, hidden61ade\r\n\r\n-
-        Game Design: hidden61ade\r\n\r\n- Art Design: AlwaysHungry\r\n\r\n- Level
-        Design: ilya8677\r\n\r\n- Sound Design: the_iaald\r\n\r\n- Scripter: hidden61ade\r\n\r\nA
-        student team from The Chinese University of Hong Kong, Shenzhen. \r\n\r\n
-        Special Thanks: Game Odyssey, a CUHKSZ student club."
-      objectReference: {fileID: 0}
-    - target: {fileID: 5933307127616182033, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5933307127616182033, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -383
-      objectReference: {fileID: 0}
     - target: {fileID: 6718184666694481574, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
       propertyPath: m_Name
       value: CreditsPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 6718184666694481574, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -384
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 402
-      objectReference: {fileID: 0}
-    - target: {fileID: 7816544005468925711, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 3633137176641630656, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c730b68239da3e40822bb9f8d1406b2, type: 3}
@@ -795,7 +742,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &464237287
 RectTransform:
   m_ObjectHideFlags: 0

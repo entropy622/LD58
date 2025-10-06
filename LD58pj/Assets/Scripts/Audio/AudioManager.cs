@@ -12,7 +12,7 @@ namespace Audio
         public AudioClip creditClip;        // 制作人员音乐
         
         [Header("音频参数")]
-        [Range(0f, 1f)]
+        [Range(0f, 2f)]
         public float musicVolume = 1f;    // 音乐音量
         
         [Range(0f, 1f)]

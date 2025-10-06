@@ -5,6 +5,7 @@ using Kuchinashi.SceneControl;
 using UnityEngine.SceneManagement;
 using QFramework;
 using TMPro;
+using AudioManager = Audio.AudioManager;
 
 public class UIManager : MonoSingleton<UIManager>
 {
@@ -107,6 +108,7 @@ public class UIManager : MonoSingleton<UIManager>
         if (creditsPanel != null)
         {
             creditsPanel.SetActive(true);
+            Audio.AudioManager.Instance.PlayCreditMusic();
         }
     }
 
@@ -116,6 +118,7 @@ public class UIManager : MonoSingleton<UIManager>
         if (creditsPanel != null)
         {
             creditsPanel.SetActive(false);
+            Audio.AudioManager.Instance.PlayTitleMusic();
         }
     }
     private void Update() {

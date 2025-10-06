@@ -15,6 +15,7 @@ public class StartPanelControl : MonoBehaviour
         mExitButton = transform.Find("ExitButton").GetComponent<Button>();
         mCreditButton = transform.Find("CreditButton").GetComponent<Button>();
         
+        Audio.AudioManager.Instance.PlayTitleMusic();
 
         mStartButton.onClick.AddListener(() =>
         {
@@ -32,5 +33,7 @@ public class StartPanelControl : MonoBehaviour
         mCreditButton.onClick.AddListener(()=>{
             UIManager.Instance.ShowCredits();
         });
+        
+        Audio.AudioManager.Instance.PlayTitleMusic();
     }
 }
