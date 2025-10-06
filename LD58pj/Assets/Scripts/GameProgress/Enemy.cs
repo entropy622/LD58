@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour
         
         //随机设置movementDirection和movementSpeed
         movementDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-        movementSpeed = Random.Range(1f, 20f);
+        movementSpeed = Random.Range(2f, 11f);
     }
 
     /// <summary>

@@ -15406,8 +15406,8 @@ MonoBehaviour:
   gameTime: 120
   enemiesToUpgrade: 5
   enemyPrefab: {fileID: 2492007399394968610, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
-  maxEnemies: 70
-  enemySpawnInterval: 0.9
+  maxEnemies: 700
+  enemySpawnInterval: 0.6
   spawnEnemyAccelerate: 0.9
   spawnAreaMin: {x: -115.9, y: 10.3}
   spawnAreaMax: {x: -61.3, y: -25.8}
