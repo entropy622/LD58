@@ -138,7 +138,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 0.5141899
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 2
@@ -227,7 +227,7 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 8d7810fee72ea5f42924cb2a4d4f05c1, type: 3}
     color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
-    jumpPower: 25
+    jumpPower: 12
     coyoteTime: 0.1
     jumpBufferTime: 0.1
   _ironBlockAbility:
@@ -267,8 +267,8 @@ MonoBehaviour:
     icon: {fileID: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
-    firstJumpPower: 10
-    secondJumpPower: 25
+    firstJumpPower: 3
+    secondJumpPower: 12
     coyoteTime: 0.1
     jumpBufferTime: 0.1
     jumpCooldown: 0.1
@@ -283,6 +283,7 @@ MonoBehaviour:
     color: {r: 0, g: 0, b: 0, a: 0}
     _isEnabled: 1
     dashForce: 10
+    dashCooldown: 1
 --- !u!1 &1769518366039675302
 GameObject:
   m_ObjectHideFlags: 0
