@@ -109,10 +109,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a33a82de343af4b44a1d878e63fc68bd, type: 3}
   soundVolume: 0.7
   particleColor: {r: 1, g: 0, b: 0, a: 1}
-  particleCount: 20
+  particleCount: 200
   particleLifetime: 1
   particleSpeed: 5
   createParticlesIfMissing: 1
+  player: {fileID: 0}
 --- !u!58 &5456074633220434075
 CircleCollider2D:
   m_ObjectHideFlags: 0

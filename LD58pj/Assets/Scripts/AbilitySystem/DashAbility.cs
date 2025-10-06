@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -26,13 +27,19 @@ public class DashAbility : PlayerAbility
 
     public override void UpdateAbility()
     {
+        Debug.Log("spiriteRenderer.flipX: " + playerController.GetComponent<SpriteRenderer>().flipX);
         //按下shift，检测移动方向，冲刺
         if (!isEnabled) return;
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
+
             if (Time.time - lastDashTime >= dashCooldown)
             {
-                Vector2 dashDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+                //只能左右冲刺，获取冲刺时左右朝向
+                //获取player贴图的左右的朝向
+                bool isFacingLeft = playerController.gameObject.transform.localScale.x < 0;
+                Vector2 dashDirection = isFacingLeft ? Vector2.left : Vector2.right;
+
                 PerformDash(dashDirection);
                 lastDashTime = Time.time; // 记录冲刺时间
             }
