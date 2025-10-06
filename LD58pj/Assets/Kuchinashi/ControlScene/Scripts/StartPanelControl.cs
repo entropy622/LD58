@@ -9,6 +9,8 @@ public class StartPanelControl : MonoBehaviour
     private Button mStartButton;
     private Button mExitButton;
     private Button mCreditButton;
+
+    private double lastClickStartButtonTime = -1;
     private void Start()
     {
         mStartButton = transform.Find("StartButton").GetComponent<Button>();
@@ -20,7 +22,11 @@ public class StartPanelControl : MonoBehaviour
         mStartButton.onClick.AddListener(() =>
         {
             // SceneControl.SwitchSceneWithoutConfirm("TestScene");
-            SceneControl.SwitchSceneWithoutConfirm("chapter 1");
+            if (Time.timeAsDouble - lastClickStartButtonTime > 1)
+            {
+                lastClickStartButtonTime = Time.timeAsDouble;
+                SceneControl.SwitchSceneWithoutConfirm("chapter 1");
+            }
         });
         mExitButton.onClick.AddListener(() =>
         {
