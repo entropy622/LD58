@@ -11,7 +11,6 @@ public class PlayerControllerEditor : Editor
     private SerializedProperty balloonAbilityProp;
     private SerializedProperty gravityFlipAbilityProp;
     private SerializedProperty iceBlockAbilityProp;
-    private SerializedProperty shrinkAbilityProp;
     
     // 缓存上一次的参数值，用于检测变化
     private bool hasChanged = false;
@@ -25,7 +24,6 @@ public class PlayerControllerEditor : Editor
         balloonAbilityProp = serializedObject.FindProperty("_balloonAbility");
         gravityFlipAbilityProp = serializedObject.FindProperty("_gravityFlipAbility");  
         iceBlockAbilityProp = serializedObject.FindProperty("_iceBlockAbility");
-        shrinkAbilityProp = serializedObject.FindProperty("_shrinkAbility");
     }
     
     public override void OnInspectorGUI()
@@ -57,7 +55,7 @@ public class PlayerControllerEditor : Editor
         DrawAbilitySection("🎈 气球能力", balloonAbilityProp, controller.balloonAbility);
         DrawAbilitySection("👻 翻转能力", gravityFlipAbilityProp, controller.gravityFlipAbility);
         DrawAbilitySection("氷 冰块能力", iceBlockAbilityProp, controller.iceBlockAbility);
-        DrawAbilitySection("縮 小能力", shrinkAbilityProp, controller.shrinkAbility);
+        // DrawAbilitySection("縮 小能力", shrinkAbilityProp, controller.shrinkAbility);
         
         // 检测是否有变化
         if (EditorGUI.EndChangeCheck())
@@ -94,7 +92,6 @@ public class PlayerControllerEditor : Editor
         controller.balloonAbility?.Initialize(controller);
         controller.gravityFlipAbility?.Initialize(controller);
         controller.iceBlockAbility?.Initialize(controller);
-        controller.shrinkAbility?.Initialize(controller);
         
         // 同步AbilityManager的状态
         var abilityManager = controller.GetAbilityManager();

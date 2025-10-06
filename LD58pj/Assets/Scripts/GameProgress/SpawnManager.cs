@@ -588,9 +588,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         currentLevel++;
         enemiesKilled = 0;
         
-        // 增加升级奖励分数
-        currentScore += currentLevel * 50;
-        
         // 生成能力水晶
         SpawnAbilityCrystal();
         
