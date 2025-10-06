@@ -41,9 +41,6 @@ public class GameManager : MonoSingleton<GameManager>
     {
         TypeEventSystem.Global.Register<OnSceneLoadedEvent>(e =>
         {
-
-            Audio.AudioManager.Instance.PlayBGM();
-            
             Player = GameObject.FindGameObjectWithTag("Player");
 
             if (Player != null)

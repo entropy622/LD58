@@ -24,7 +24,7 @@ public class StartPanelControl : MonoBehaviour
                 return;
             }
             SceneControl.Instance.hasStart = true;
-            SceneControl.SwitchSceneWithoutConfirm("chapter 1");
+            SceneControl.SwitchSceneWithoutConfirm("chapter 1", () => Audio.AudioManager.Instance.PlayBGM());
         });
         mExitButton.onClick.AddListener(() =>
         {
