@@ -37,7 +37,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     [Space(5)]
     [SerializeField] private IceBlockAbility _iceBlockAbility = new IceBlockAbility();
     [Space(5)]
-    [SerializeField] private ShrinkAbility _shrinkAbility = new ShrinkAbility();
+    // [SerializeField] private ShrinkAbility _shrinkAbility = new ShrinkAbility();
     [Space(5)]
     [SerializeField] private DoubleJumpAbility _doubleJumpAbility = new DoubleJumpAbility();
     // [Space(5)]
@@ -50,7 +50,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     public BalloonAbility balloonAbility => _balloonAbility;
     public GravityFlipAbility gravityFlipAbility => _gravityFlipAbility;
     public IceBlockAbility iceBlockAbility => _iceBlockAbility;
-    public ShrinkAbility shrinkAbility => _shrinkAbility;
+    // public ShrinkAbility shrinkAbility => _shrinkAbility;
     public DoubleJumpAbility doubleJumpAbility => _doubleJumpAbility;
     // public BouncyBallAbility bouncyBallAbility => _bouncyBallAbility;
     
@@ -199,7 +199,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         _balloonAbility.Initialize(this);
         _gravityFlipAbility.Initialize(this);
         _iceBlockAbility.Initialize(this);
-        _shrinkAbility.Initialize(this);
+        // _shrinkAbility.Initialize(this);
         _doubleJumpAbility.Initialize(this);
         // _bouncyBallAbility.Initialize(this);
         
@@ -210,7 +210,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         RegisterAbility(_balloonAbility);
         RegisterAbility(_gravityFlipAbility);
         RegisterAbility(_iceBlockAbility);
-        RegisterAbility(_shrinkAbility);
+        // RegisterAbility(_shrinkAbility);
         RegisterAbility(_doubleJumpAbility);
         // RegisterAbility(_bouncyBallAbility);
     }
@@ -254,7 +254,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         if (abilityManager == null) return;
 
-        var equippedAbilities = abilityManager.GetEquippedAbilities();
+        var equippedAbilities = abilityManager.GetActiveAbilities();
         foreach (string abilityTypeId in equippedAbilities)
         {
             if (_abilityRegistry.TryGetValue(abilityTypeId, out PlayerAbility ability))
@@ -271,7 +271,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         if (abilityManager == null) return;
 
-        var activeAbilities = abilityManager.GetEquippedAbilities();
+        var activeAbilities = abilityManager.GetActiveAbilities();
         foreach (string abilityTypeId in activeAbilities)
         {
             if (_abilityRegistry.TryGetValue(abilityTypeId, out PlayerAbility ability))
