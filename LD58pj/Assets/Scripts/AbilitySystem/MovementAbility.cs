@@ -63,6 +63,16 @@ public class MovementAbility : PlayerAbility
             }
         }
         
+        // 检查是否有弹力球能力的速度增强
+        if (AbilityManager.Instance.activeAbilities.Contains("BouncyBall"))
+        {
+            var bouncyBallAbility = playerController.GetAbilityByTypeId("BouncyBall") as BouncyBallAbility;
+            if (bouncyBallAbility != null)
+            {
+                currentSpeed = bouncyBallAbility.ModifyMovementSpeed(currentSpeed);
+            }
+        }
+        
         // 优化的移动逼辑，解决撞墙停止问题
         Vector2 currentVelocity = playerController.GetVelocity();
         

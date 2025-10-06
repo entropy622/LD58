@@ -220,8 +220,8 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 5de812fda279e4f448c2fe8a6bf09921, type: 3}
     color: {r: 1, g: 1, b: 1, a: 0}
     _isEnabled: 1
-    walkSpeed: 5
-    runSpeed: 8
+    walkSpeed: 10
+    runSpeed: 14
   _jumpAbility:
     abilityName: 
     icon: {fileID: 21300000, guid: 8d7810fee72ea5f42924cb2a4d4f05c1, type: 3}
@@ -273,6 +273,35 @@ MonoBehaviour:
     massMultiplier: 1
     jumpPowerMultiplier: 0.6
     speedMultiplier: 1.2
+  _doubleJumpAbility:
+    abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    _isEnabled: 1
+    firstJumpPower: 10
+    secondJumpPower: 10
+    coyoteTime: 0.1
+    jumpBufferTime: 0.1
+    jumpCooldown: 0.1
+    enableAirControl: 1
+    airControlMultiplier: 0.8
+    enableDoubleJumpMomentum: 1
+    enableDoubleJumpEffect: 1
+    doubleJumpEffectColor: {r: 0, g: 1, b: 1, a: 1}
+  _bouncyBallAbility:
+    abilityName: 
+    icon: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    _isEnabled: 1
+    speedMultiplier: 1.5
+    bounceForce: 12
+    minimumBounceVelocity: 2
+    enableWallBounce: 1
+    enableGroundBounce: 1
+    enableBounceEffect: 1
+    bounceEffectColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    effectDuration: 0.3
+    enableBallAnimation: 1
 --- !u!1 &1769518366039675302
 GameObject:
   m_ObjectHideFlags: 0
