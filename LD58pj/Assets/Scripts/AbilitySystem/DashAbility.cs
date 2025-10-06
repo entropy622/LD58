@@ -11,6 +11,11 @@ public class DashAbility : PlayerAbility
     // 冲刺力度
     public float dashForce = 10f;
 
+    // 冲刺冷却时间（秒）
+    public float dashCooldown = 1f;
+    // 上次冲刺时间
+    private float lastDashTime = -999f;
+
     public override string AbilityTypeId => "Dash";
 
     public override void Initialize(PlayerController controller)
@@ -21,14 +26,17 @@ public class DashAbility : PlayerAbility
 
     public override void UpdateAbility()
     {
-        //按下s，检测移动方向，冲刺
+        //按下shift，检测移动方向，冲刺
         if (!isEnabled) return;
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            Vector2 dashDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
-            PerformDash(dashDirection);
-
-    
+            if (Time.time - lastDashTime >= dashCooldown)
+            {
+                Vector2 dashDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+                PerformDash(dashDirection);
+                lastDashTime = Time.time; // 记录冲刺时间
+            }
+            // else 可以加提示：冷却中
         }
 
         // 冲刺能力每帧逻辑
@@ -54,7 +62,7 @@ public class DashAbility : PlayerAbility
         if (!isEnabled) return;
         GameObject player = playerController.gameObject;
         // 在这里添加冲刺逻辑，例如应用一个瞬时的速度变化
-        player.GetComponent<Rigidbody2D>().AddForce(direction.normalized * dashForce * 10, ForceMode2D.Impulse);
+        player.GetComponent<Rigidbody2D>().AddForce(direction.normalized * dashForce * 5, ForceMode2D.Impulse);
 
         // 执行冲刺动作的逻辑
     }

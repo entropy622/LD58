@@ -185,6 +185,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8032313307607421248, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8032313307607421248, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
+      propertyPath: m_GravityScale
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -694,8 +702,7 @@ MonoBehaviour:
   - 
   - 
   - 
-  activeAbilities:
-  - 
+  activeAbilities: []
 --- !u!1 &1433003673 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3973775511726218851, guid: f753c93ab1190cc4ca330b523068cb72, type: 3}
@@ -15406,8 +15413,8 @@ MonoBehaviour:
   gameTime: 120
   enemiesToUpgrade: 5
   enemyPrefab: {fileID: 2492007399394968610, guid: f808f6aaf8ea18e499e9cfb68218ad27, type: 3}
-  maxEnemies: 70
-  enemySpawnInterval: 0.9
+  maxEnemies: 1000
+  enemySpawnInterval: 0.1
   spawnEnemyAccelerate: 0.9
   spawnAreaMin: {x: -115.9, y: 10.3}
   spawnAreaMax: {x: -61.3, y: -25.8}
@@ -21068,6 +21075,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 337464454573008586, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: m_Mass
+      value: 0.5141899
+      objectReference: {fileID: 0}
+    - target: {fileID: 337464454573008586, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
+      propertyPath: m_UseAutoMass
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1586904685604853981, guid: 3f7913601a806e04e963f39abf6f2f1d, type: 3}
       propertyPath: m_Name
       value: TestPlayer
