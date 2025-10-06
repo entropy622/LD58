@@ -11,7 +11,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 7613144914101181913}
-    m_Position: {x: 370, y: 110, z: 0}
+    m_Position: {x: 370, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -30,13 +30,7 @@ AnimatorController:
   m_PrefabAsset: {fileID: 0}
   m_Name: LoadingScene
   serializedVersion: 5
-  m_AnimatorParameters:
-  - m_Name: start
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+  m_AnimatorParameters: []
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -70,7 +64,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: b1ed29c8adc129e46a9a298c97571b3b, type: 2}
+  m_Motion: {fileID: 7400000, guid: c7fcce2af41e7404e880de8f9a4c1891, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
